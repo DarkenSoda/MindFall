@@ -4,6 +4,7 @@
 #include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
 #include "UI/menu.h"
+#include "Environment/Map.h"
 
 enum class State {
     MAIN_MENU,
@@ -18,6 +19,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
+
     sf::Texture bgMain, bgGameOver;
     sf::Texture btnStart, btnQuit, btnRetry;
 
@@ -27,6 +29,7 @@ int main() {
     if (!btnStart.loadFromFile("../../../Assets/start.jpg")) return -1;
     if (!btnQuit.loadFromFile("../../../Assets/exit.png")) return -1;
     if (!btnRetry.loadFromFile("../../../Assets/tryAgain.jpeg")) return -1;
+
 
     Menu mainMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgMain, btnStart, btnQuit);
     Menu gameOverMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgGameOver, btnRetry, btnQuit);
@@ -38,6 +41,15 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
+
+
+      Map gameMap;
+    
+    gameMap.init(world, nullptr);
+    gameMap.addLayer("../../../Assets/background_2.png", 20.f);
+    gameMap.addLayer("../../../Assets/background_3.png", 40.f);
+    gameMap.addLayer("../../../Assets/background_4.png", 80.f);
+
 
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -104,7 +116,8 @@ int main() {
             mainMenu.draw(window);
         }
         else if (currentState == State::PLAYING){
-            
+            gameMap.update(Utils::Time::fixedDeltaTime);
+            gameMap.draw(window);
         }
         else if (currentState == State::GAME_OVER){
             gameOverMenu.draw(window);
