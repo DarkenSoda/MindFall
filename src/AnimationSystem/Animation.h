@@ -13,8 +13,8 @@ private:
     int frameCount;
 
     sf::Vector2u size;
-    unsigned int sizeX;
-    unsigned int sizeY;
+    int sizeX;
+    int sizeY;
 
 public:
     Animation(std::string path, float switchTime, int frameCount);
