@@ -4,17 +4,12 @@
 #include <string>
 #include <iostream>
 #include <memory>
-
-enum class CollectibleType {
-    Score,
-    Damage
-};
+#include "CollectibleData.h"
 
 class Collectible {
 private:
     sf::Sprite sprite;
-    sf::Texture texture1;
-    sf::Texture texture2;
+    const CollectiblePrototype* prototype;
 
     b2Body* body;
     b2World* world;
@@ -29,10 +24,8 @@ private:
     bool usingFirstTexture;
 
 public:
-    Collectible(const std::string& texture1Path, const std::string& texture2Path, 
-                CollectibleType collectibleType, float spawnPercent, float colliderRadius = 20.f);
-
-    std::unique_ptr<Collectible> clone(b2World* world, sf::Vector2f startPosition, sf::Vector2f initialVelocity, CollectibleType type) const;
+    Collectible(const CollectiblePrototype& prototypeRef, b2World* world, 
+                sf::Vector2f startPosition, sf::Vector2f initialVelocity, CollectibleType type);
 
     ~Collectible();
 
@@ -40,6 +33,7 @@ public:
     void draw(sf::RenderWindow& window);
     void switchTexture();
     
+    const CollectiblePrototype* getPrototype() const { return prototype; }
     bool getIsActive() const { return isActive; }
     CollectibleType getType() const { return type; }
     sf::FloatRect getGlobalBounds() const { return sprite.getGlobalBounds(); }

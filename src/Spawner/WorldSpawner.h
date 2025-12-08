@@ -12,22 +12,23 @@
 class WorldSpawner {
 private:
     std::vector<std::unique_ptr<Collectible>> collectibles;
-    std::vector<std::unique_ptr<Collectible>> collectiblePrototypes;
+    std::vector<CollectiblePrototype> collectiblePrototypes;
+
     b2World* world;
     float spawnTimer;
     float spawnInterval;
     bool spawnTypeReversed;
     std::mt19937 randomGenerator;
 
-    Collectible* selectCollectibleToSpawn();
+    CollectiblePrototype* selectCollectibleToSpawn();
 
 public:
     WorldSpawner(b2World* world);
     void update(float deltaTime, float screenWidth);
     void draw(sf::RenderWindow& window);
-    
-    void addCollectiblePrototype(std::unique_ptr<Collectible> prototype);
+
+    void addCollectiblePrototype(CollectiblePrototype prototype);
     std::vector<std::unique_ptr<Collectible>>& getCollectibles() { return collectibles; }
-    
+
     void removeInactiveCollectibles();
 };

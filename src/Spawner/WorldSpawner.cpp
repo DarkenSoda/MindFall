@@ -7,6 +7,37 @@ WorldSpawner::WorldSpawner(b2World* world)
     , randomGenerator(std::random_device{}())
     , spawnTypeReversed(false)
 {
+
+    sf::Texture texture1;
+    sf::Texture texture2;
+
+    if(!texture1.loadFromFile("assets/prop1.png") || !texture2.loadFromFile("assets/prop2.png")) {
+        std::cerr << "Error loading collectible textures!" << std::endl;
+    }
+
+    texture1.setSmooth(true);
+    texture2.setSmooth(true);
+
+    if(!texture1.generateMipmap() || !texture2.generateMipmap()) {
+        std::cerr << "Error generating mipmaps for collectible textures!" << std::endl;
+    }
+
+    collectiblePrototypes = {
+        {
+            texture1,
+            texture2,
+            CollectibleType::Score,
+            70.f,
+            28.f
+        },
+        {
+            texture1,
+            texture2,
+            CollectibleType::Damage,
+            30.f,
+            28.f
+        }
+    };
 }
 
 void WorldSpawner::update(float deltaTime, float screenWidth) {
@@ -15,7 +46,7 @@ void WorldSpawner::update(float deltaTime, float screenWidth) {
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0.f;
 
-        Collectible* prototypeToSpawn = selectCollectibleToSpawn();
+        CollectiblePrototype* prototypeToSpawn = selectCollectibleToSpawn();
         
         if (prototypeToSpawn != nullptr) {
             std::uniform_real_distribution<float> xDist(50.f, screenWidth - 50.f);
@@ -24,8 +55,11 @@ void WorldSpawner::update(float deltaTime, float screenWidth) {
             sf::Vector2f spawnPosition(randomX, -5.f);
             sf::Vector2f downwardVelocity(0.f, 200.f);
 
-            
-            auto newCollectible = prototypeToSpawn->clone(world, spawnPosition, downwardVelocity, spawnTypeReversed ? CollectibleType::Damage : CollectibleType::Score);
+            // Create new collectible using prototype reference
+            auto newCollectible = std::make_unique<Collectible>(
+                *prototypeToSpawn, world, spawnPosition, downwardVelocity,
+                spawnTypeReversed ? CollectibleType::Damage : CollectibleType::Score
+            );
             
             collectibles.push_back(std::move(newCollectible));
         }
@@ -44,32 +78,32 @@ void WorldSpawner::draw(sf::RenderWindow& window) {
     }
 }
 
-void WorldSpawner::addCollectiblePrototype(std::unique_ptr<Collectible> prototype) {
+void WorldSpawner::addCollectiblePrototype(CollectiblePrototype prototype) {
     collectiblePrototypes.push_back(std::move(prototype));
 }
 
-Collectible* WorldSpawner::selectCollectibleToSpawn() {
+CollectiblePrototype* WorldSpawner::selectCollectibleToSpawn() {
     if (collectiblePrototypes.empty()) {
         return nullptr;
     }
 
     float totalPercentage = 0.f;
     for (const auto& prototype : collectiblePrototypes) {
-        totalPercentage += prototype->getSpawnPercentage();
+        totalPercentage += prototype.spawnPercentage;
     }
 
     std::uniform_real_distribution<float> dist(0.f, totalPercentage);
     float randomValue = dist(randomGenerator);
 
     float cumulativePercentage = 0.f;
-    for (const auto& prototype : collectiblePrototypes) {
-        cumulativePercentage += prototype->getSpawnPercentage();
+    for (auto& prototype : collectiblePrototypes) {
+        cumulativePercentage += prototype.spawnPercentage;
         if (randomValue <= cumulativePercentage) {
-            return prototype.get();
+            return &prototype;
         }
     }
 
-    return collectiblePrototypes[0].get();
+    return &collectiblePrototypes[0];
 }
 
 static bool isCollectibleInactive(const std::unique_ptr<Collectible>& collectible) {

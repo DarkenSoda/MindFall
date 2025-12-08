@@ -19,7 +19,6 @@ int main() {
     world.SetContactListener(&collisionHandler);
 
     WorldSpawner spawner(&world);
-    spawner.addCollectiblePrototype(std::make_unique<Collectible>("assets/prop1.png", "assets/prop2.png", CollectibleType::Score, 70.f));
 
     while (window.isOpen()) {
         Utils::Time::Update();
