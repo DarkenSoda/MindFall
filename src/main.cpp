@@ -3,6 +3,13 @@
 #include "Time.h"
 #include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
+#include "UI/menu.h"
+
+enum class State {
+    MAIN_MENU,
+    PLAYING,
+    GAME_OVER
+};
 
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
@@ -10,6 +17,21 @@ const float WINDOW_HEIGHT = 1080.f;
 int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
+
+    sf::Texture bgMain, bgGameOver;
+    sf::Texture btnStart, btnQuit, btnRetry;
+
+    if (!bgMain.loadFromFile("../../../Assets/images.jpeg")) return -1;
+    if (!bgGameOver.loadFromFile("../../../Assets/images.jpeg")) return -1;
+
+    if (!btnStart.loadFromFile("../../../Assets/start.jpg")) return -1;
+    if (!btnQuit.loadFromFile("../../../Assets/exit.png")) return -1;
+    if (!btnRetry.loadFromFile("../../../Assets/tryAgain.jpeg")) return -1;
+
+    Menu mainMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgMain, btnStart, btnQuit);
+    Menu gameOverMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgGameOver, btnRetry, btnQuit);
+    State currentState = State::MAIN_MENU;
+
 
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
 
@@ -54,10 +76,40 @@ int main() {
             }
         }
 
-        world.Step(Utils::Time::fixedDeltaTime, 8, 3);
+        if(currentState == State::MAIN_MENU){
+            int action = mainMenu.handleInput(window);
+            if(action == 1){
+                currentState = State::PLAYING;
+            } else if(action == 2){
+                window.close();
+            }
+        }
+        else if (currentState == State::PLAYING){
+            world.Step(Utils::Time::fixedDeltaTime, 8, 3);
+        }
+        else if (currentState == State::GAME_OVER){
+            int action = gameOverMenu.handleInput(window);
+            if(action == 1){
+                currentState = State::PLAYING;
+            } else if(action == 2){
+                window.close();
+            }
+        }
+        
+
+
 
         window.clear();
-        window.setView(gameView);
+        if(currentState == State::MAIN_MENU){
+            mainMenu.draw(window);
+        }
+        else if (currentState == State::PLAYING){
+            
+        }
+        else if (currentState == State::GAME_OVER){
+            gameOverMenu.draw(window);
+        }
+        
 
         window.display();
     }
