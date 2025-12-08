@@ -2,6 +2,7 @@
 
 namespace Utils {
     float Time::deltaTime = 0.0f;
+    float Time::fixedDeltaTime = 1.0f / 60.0f;
     float Time::time = 0.0f;
     float Time::frameRate = 0.0f;
     int Time::frameCount = 0;

@@ -9,6 +9,7 @@ namespace Utils {
         static float deltaTime;
         static float time;
         static float frameRate;
+        static float fixedDeltaTime;
 
     private:
         static void CalculateTime() { GetTime(); CalculateDeltaTime(); CalculateFrameRate(); }

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
 #include "Time.h"
+#include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
 
 const float WINDOW_WIDTH = 1920.f;
@@ -12,18 +13,9 @@ int main() {
 
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
 
-    sf::Texture bg("assets/bg2.png");
-    sf::Sprite bgSprite(bg);
-
-    bgSprite.setScale({ 0.75, 0.75 });
-
-    sf::Texture ch("assets/ch2.png");
-    ch.generateMipmap();
-    // ch.setSmooth(true);
-
-    sf::Sprite chSprite(ch);
-
-    chSprite.setScale({ 0.1, 0.1 });
+    b2World world(b2Vec2(0.f, 0.f));
+    CollisionHandler collisionHandler;
+    world.SetContactListener(&collisionHandler);
 
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -55,12 +47,11 @@ int main() {
                 gameView.setViewport(sf::FloatRect({ posX, posY }, { sizeX, sizeY }));
             }
         }
+
+        world.Step(Utils::Time::fixedDeltaTime, 8, 3);
         
         window.clear();
         window.setView(gameView);
-
-        window.draw(bgSprite);
-        window.draw(chSprite);
 
         window.display();
     }
