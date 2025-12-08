@@ -2,6 +2,7 @@
 #include <box2d/box2d.h>
 #include "Time.h"
 #include "CollisionSystem/CollisionHandler.h"
+#include "Spawner/WorldSpawner.h"
 #include <cmath>
 
 const float WINDOW_WIDTH = 1920.f;
@@ -16,6 +17,9 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
+
+    WorldSpawner spawner(&world);
+    spawner.addCollectiblePrototype(std::make_unique<Collectible>("assets/prop1.png", "assets/prop2.png", CollectibleType::Score, 70.f));
 
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -56,8 +60,12 @@ int main() {
 
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
+        spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
+
         window.clear();
         window.setView(gameView);
+
+        spawner.draw(window);
 
         window.display();
     }
