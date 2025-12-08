@@ -27,37 +27,6 @@ Collectible::Collectible(const std::string& texture1Path, const std::string& tex
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
 }
 
-Collectible::Collectible(sf::Texture& tex1, sf::Texture& tex2,
-    CollectibleType collectibleType, float spawnPercent, float colliderRadius)
-    : type(collectibleType)
-    , spawnPercentage(spawnPercent)
-    , radius(colliderRadius)
-    , body(nullptr)
-    , world(nullptr)
-    , position(0.f, 0.f)
-    , isActive(false)
-    , usingFirstTexture(true)
-    , texture1(tex1)
-    , texture2(tex2)
-    , sprite(texture1) {
-
-    if (type == CollectibleType::Score) {
-        sprite.setTexture(texture1);
-        usingFirstTexture = true;
-    }
-    else {
-        sprite.setTexture(texture2);
-        usingFirstTexture = false;
-    }
-
-    sprite.setTexture(texture1);
-    sprite.setOrigin({ 0.0f, 0.0f });
-    sprite.setScale({ 0.1f, 0.1f });
-
-    sf::FloatRect bounds = sprite.getLocalBounds();
-    sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
-}
-
 Collectible::~Collectible() {
     if (body && world) {
         world->DestroyBody(body);

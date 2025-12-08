@@ -31,8 +31,6 @@ private:
 public:
     Collectible(const std::string& texture1Path, const std::string& texture2Path, 
                 CollectibleType collectibleType, float spawnPercent, float colliderRadius = 20.f);
-    Collectible(sf::Texture& tex1, sf::Texture& tex2,
-                CollectibleType collectibleType, float spawnPercent, float colliderRadius = 20.f);
 
     std::unique_ptr<Collectible> clone(b2World* world, sf::Vector2f startPosition, sf::Vector2f initialVelocity, CollectibleType type) const;
 
