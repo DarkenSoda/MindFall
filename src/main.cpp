@@ -8,7 +8,7 @@ const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam");
+    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
@@ -23,6 +23,12 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+
+            if(const auto& keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+                if (keyEvent->code == sf::Keyboard::Key::Escape)
+                    window.close();
+            }
+
 
             if (event->is<sf::Event::Resized>()) {
                 const auto& resizeEvent = event->getIf<sf::Event::Resized>();
@@ -49,7 +55,7 @@ int main() {
         }
 
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
-        
+
         window.clear();
         window.setView(gameView);
 

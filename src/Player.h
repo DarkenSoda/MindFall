@@ -1,9 +1,11 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
 #include <string>
-#include "Animator.h"
-#include "Animation.h"
+#include "AnimationSystem/Animator.h"
+#include "AnimationSystem/Animation.h"
 #include "PlayerCommand.h"
+#include "InputHandler.h"
 
 class Player {
 private:

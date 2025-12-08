@@ -1,7 +1,4 @@
 #include "Player.h"
-#include "Animation.h"
-#include "InputHandler.h"
-#include "PlayerCommand.h"
 
 void Player::animations()
 {
