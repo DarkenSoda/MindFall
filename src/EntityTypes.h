@@ -2,5 +2,8 @@
 enum class EntityType {
     PLAYER,
     GROUND,       
-    COLLECTIBLE
+    COLLECTIBLE,
+    BOSS,
+    BULLET,
+    LASER,
 };
