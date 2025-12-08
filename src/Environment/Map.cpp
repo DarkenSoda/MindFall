@@ -46,11 +46,11 @@ void Map::init(b2World& world, const sf::Texture* groundTexture) {
     m_groundBody->CreateFixture(&fixtureDef);
 }
 
-// 2. NEW ADD LAYER FUNCTION
+
 void Map::addLayer(const std::string& filePath, float speed) {
     auto newLayer = std::make_unique<ParallaxLayer>();
     
-    // Calls the load function in ParallaxLayer
+
     if (newLayer->load(filePath, speed)) {
         m_parallaxLayers.push_back(std::move(newLayer));
     } else {
@@ -58,20 +58,19 @@ void Map::addLayer(const std::string& filePath, float speed) {
     }
 }
 
-// 3. NEW UPDATE FUNCTION
+
 void Map::update(float dt) {
     for (auto& layer : m_parallaxLayers) {
         layer->update(dt);
     }
 }
 
-// 4. UPDATED DRAW
+
 void Map::draw(sf::RenderWindow& window) {
-    // Draw Backgrounds First
+
     for (auto& layer : m_parallaxLayers) {
         layer->draw(window);
     }
 
-    // Draw Ground Last
     window.draw(m_groundShape);
 }
