@@ -2,8 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include "AnimationSystem/Animator.h"
-#include "AnimationSystem/Animation.h"
+#include "../AnimationSystem/Animator.h"
+#include "../AnimationSystem/Animation.h"
 #include "PlayerCommand.h"
 #include "InputHandler.h"
 
@@ -12,6 +12,13 @@ private:
     sf::Vector2f position;
     Animator animator;
     float moveSpeed;
+    float rage;
+    float multilyer;
+    bool rageDirection;
+    float maximumRage;
+    float minimumRage;
+    float timeToEmptyRage;
+    float rageDownCooldown;
 
     void animations();  
 public:
@@ -26,4 +33,6 @@ public:
     sf::FloatRect getGlobalBound();
 
     sf::Sprite& CurrentAnimaton();
+
+    void update(float deltatime);
 };

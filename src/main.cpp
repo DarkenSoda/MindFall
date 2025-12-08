@@ -3,6 +3,7 @@
 #include "Time.h"
 #include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
+#include "Player/Player.h"
 
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
@@ -16,6 +17,10 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
+    
+    Player player( sf::Vector2f(500.0f,500.0f), 250.0f);
+    InputHandler input;
+    PlayerCommand command;
 
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -49,16 +54,20 @@ int main() {
                     sizeY = windowRatio / viewRatio;
                     posY = (1.f - sizeY) / 2.f;
                 }
-
                 gameView.setViewport(sf::FloatRect({ posX, posY }, { sizeX, sizeY }));
             }
         }
 
+        command = input.getCommand(false);
+        player.move(command, Utils::Time::deltaTime);
+        player.update(Utils::Time::deltaTime);
+
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
         window.clear();
+        window.draw(player.CurrentAnimaton());
         window.setView(gameView);
-
         window.display();
     }
+    return 0;
 }

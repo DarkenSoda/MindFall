@@ -4,5 +4,5 @@
 
 class InputHandler {
 public:
-    PlayerCommand getCommand();
+    PlayerCommand getCommand(bool direction);
 };
