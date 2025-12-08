@@ -49,7 +49,7 @@ void WorldSpawner::update(float deltaTime, float screenWidth) {
         CollectiblePrototype* prototypeToSpawn = selectCollectibleToSpawn();
         
         if (prototypeToSpawn != nullptr) {
-            std::uniform_real_distribution<float> xDist(50.f, screenWidth - 50.f);
+            std::uniform_real_distribution<float> xDist(80.f, screenWidth - 80.f);
             float randomX = xDist(randomGenerator);
             
             sf::Vector2f spawnPosition(randomX, -5.f);
