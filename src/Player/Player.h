@@ -30,6 +30,8 @@ public:
 
     sf::Vector2f getPlayerPosition();
 
+    float getRage();
+
     sf::FloatRect getGlobalBound();
 
     sf::Sprite& CurrentAnimaton();

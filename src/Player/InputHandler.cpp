@@ -2,7 +2,7 @@
 #include "InputHandler.h"
 #include <iostream>
 
-PlayerCommand InputHandler::getCommand(bool direction)
+PlayerCommand InputHandler::getCommand()
 {
     if (!direction)
     {

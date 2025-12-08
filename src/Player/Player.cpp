@@ -15,13 +15,13 @@ Player::Player(sf::Vector2f position, float moveSpeed)
     this->moveSpeed = moveSpeed;
     this->position = position;
     animations();
-    rage = 0;
-    multilyer = 5.5f;;
+    rage = 1.0f;
+    multilyer = 20.5f;;
     rageDirection = false;
     maximumRage = 100.0f;
     minimumRage = 0.0f;
     timeToEmptyRage = 5.0f;
-    rageDownCooldown = 0.0f;
+    rageDownCooldown = 1.0f;
 }
 
 void Player::move(PlayerCommand cmd, float deltaTime)
@@ -56,6 +56,11 @@ sf::Vector2f Player::getPlayerPosition()
     return position;
 }
 
+float Player::getRage()
+{
+    return rage;
+}
+
 sf::FloatRect Player::getGlobalBound()
 {
     return animator.CurrentAnimaton().getGlobalBounds();
@@ -72,12 +77,11 @@ void Player::update(float deltatime)
     {
         rageDirection = true;
         rage = 100.0f;
-        cout << "random Event";
     }
     if (rage <= minimumRage)
     {
         rageDirection = false;
-        multilyer = 2.5f;
+        multilyer = 20.5f;
         rage = 0.0f;
     }
     if (!rageDirection)
@@ -94,7 +98,4 @@ void Player::update(float deltatime)
             rageDownCooldown = 0.0f;
         }
     }
-   
-
-    cout << rage<<endl;
 }

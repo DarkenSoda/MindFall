@@ -4,12 +4,14 @@
 #include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
 #include "Player/Player.h"
+#include "World/EventHandler.h"
+#include "World/GameManager.h"
 
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam"/*, sf::State::Fullscreen*/);
     window.setFramerateLimit(60);
 
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
@@ -18,9 +20,11 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
     
-    Player player( sf::Vector2f(500.0f,500.0f), 250.0f);
+    Player player( sf::Vector2f(200.0f,800.0f), 250.0f);
+
     InputHandler input;
-    PlayerCommand command;
+
+    GameManager gameManager(&input, &player, &gameView , &world);
 
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -58,10 +62,7 @@ int main() {
             }
         }
 
-        command = input.getCommand(false);
-        player.move(command, Utils::Time::deltaTime);
-        player.update(Utils::Time::deltaTime);
-
+        gameManager.gameManagerUpdate();
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
         window.clear();
