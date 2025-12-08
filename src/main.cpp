@@ -12,6 +12,19 @@ int main() {
 
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
 
+    sf::Texture bg("assets/bg2.png");
+    sf::Sprite bgSprite(bg);
+
+    bgSprite.setScale({ 0.75, 0.75 });
+
+    sf::Texture ch("assets/ch2.png");
+    ch.generateMipmap();
+    // ch.setSmooth(true);
+
+    sf::Sprite chSprite(ch);
+
+    chSprite.setScale({ 0.1, 0.1 });
+
     while (window.isOpen()) {
         Utils::Time::Update();
 
@@ -46,6 +59,8 @@ int main() {
         window.clear();
         window.setView(gameView);
 
+        window.draw(bgSprite);
+        window.draw(chSprite);
 
         window.display();
     }
