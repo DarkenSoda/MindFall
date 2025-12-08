@@ -12,3 +12,5 @@ _deps
 CMakeUserPresets.json
 [Bb]uild*/
 [Dd]ebug*/
+.vs/
+out/
