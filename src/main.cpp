@@ -20,12 +20,12 @@ int main() {
 
     // Setup Dependencies
     sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { WINDOW_WIDTH, WINDOW_HEIGHT }));
-    
+
     b2World world(b2Vec2(0.f, 0.f));
-    
-    InputHandler inputHandler; 
-    Player player({ 200.f, 800.f }, 200.f);
-    
+
+    InputHandler inputHandler;
+    Player player(&world, { WINDOW_WIDTH / 2.f, 800.f }, { 50.f, 90.f }, 250.f, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     GameManager gameManager(&window, &inputHandler, &player, &gameView, &world);
 
     CollisionHandler collisionHandler(&gameManager);

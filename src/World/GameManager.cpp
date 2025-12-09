@@ -61,12 +61,10 @@ void GameManager::handleEvents()
 				window->close();
 
 			if (currentState == State::PLAYING) {
-				// Spacebar to shoot bullets upward
 				if (keyEvent->code == sf::Keyboard::Key::Space) {
 					if (shootTimer.getElapsedTime() >= shootCooldown) {
 						sf::Vector2f playerPos = player->getPlayerPosition();
-						// Spawn bullet at player position
-						bullets.emplace_back(bulletTexture, playerPos.x + 45.f, playerPos.y);
+						bullets.emplace_back(world, bulletTexture, playerPos.x + 45.f, playerPos.y, 20.f, 40.f);
 						shootTimer.restart();
 					}
 				}
@@ -140,13 +138,11 @@ void GameManager::gameManagerUpdate()
 		player->update(Utils::Time::deltaTime);
 		gameMap.update(Utils::Time::deltaTime);
 
-		// Update HealthBar based on player's current health
 		if (healthBar != nullptr) {
 			int currentHealth = player->getLives();
 			healthBar->setHealth(currentHealth);
 		}
 		rageBar->setRage(player->getRage());
-		// Update all bullets
 		for (auto& bullet : bullets) {
 			bullet.update();
 		}

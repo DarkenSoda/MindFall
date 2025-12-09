@@ -130,7 +130,7 @@ void CollisionHandler::handlePlayerLaser(EntityData* playerData, EntityData* las
 void CollisionHandler::handleBossHit(EntityData* bossData, EntityData* collectibleData) {
     Bullet* bullet = static_cast<Bullet*>(collectibleData->objectPtr);
     if (bullet) {
-        // sf::FloatRect pos = bullet->getPosition();
+        sf::Vector2f pos = bullet->getPosition();
         bullet->setActive(false);
 
         Boss* boss = static_cast<Boss*>(bossData->objectPtr);
