@@ -130,3 +130,8 @@ void PlayerParts::rotateWheels()
 {
 
 }
+
+void PlayerParts::setRotationSpeed(float speed)
+{
+    this->rotationSpeed = speed;
+}

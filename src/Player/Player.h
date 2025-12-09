@@ -21,6 +21,8 @@ private:
     float minimumRage;
     float timeToEmptyRage;
     float rageDownCooldown;
+    string state;
+    int lives;
 
     void animations();  
 public:

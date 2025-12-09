@@ -17,7 +17,7 @@ GameManager::~GameManager()
 
 void GameManager::gameManagerUpdate()
 {
-	eventHandler->handleEvent();
+	eventHandler->handleEvent(Utils::Time::deltaTime);
 	player->move(inputHandler->getCommand(), Utils::Time::deltaTime);
 	player->update(Utils::Time::deltaTime);
 }
