@@ -49,9 +49,9 @@ void Map::init(b2World& world) {
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &boxShape;
     fixtureDef.friction = 0.5f;
-    fixtureDef.userData.pointer = static_cast<uintptr_t>(EntityType::GROUND);
 
     m_groundBody->CreateFixture(&fixtureDef);
+    m_groundBody->GetUserData().pointer = reinterpret_cast<uintptr_t>(&m_groundEntityData);
     
     // Store collider data for debug draw
     m_colliderSize = {w, colliderHeight};

@@ -7,6 +7,8 @@
 
 #include "../ParallaxLayer.h" 
 #include "../UI/VideoBackground.h"
+#include "../EntityTypes.h"
+#include "../EntityData.h"
 
 class Map {
 public:
@@ -26,6 +28,7 @@ private:
     sf::RectangleShape m_groundShape;
     b2Body* m_groundBody = nullptr;
     sf::Texture m_groundTexture;
+    EntityData m_groundEntityData { EntityType::GROUND, nullptr };
     
     // Collider debug draw data
     sf::Vector2f m_colliderSize;

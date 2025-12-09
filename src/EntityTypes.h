@@ -1,9 +1,11 @@
 #pragma once
 enum class EntityType {
     PLAYER,
-    GROUND,       
-    COLLECTIBLE,
     BOSS,
+    GROUND,       
     BULLET,
+    COLLECTIBLE,
     DAMAGE,
+    LASER,
+    PROJECTILE
 };

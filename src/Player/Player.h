@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <iostream>
+#include <algorithm>
 #include "../AnimationSystem/Animator.h"
 #include "../AnimationSystem/Animation.h"
 #include "PlayerCommand.h"

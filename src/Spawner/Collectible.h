@@ -5,6 +5,8 @@
 #include <iostream>
 #include <memory>
 #include "CollectibleData.h"
+#include "../EntityTypes.h"
+#include "../EntityData.h"
 
 class Collectible {
 private:
@@ -24,6 +26,7 @@ private:
     float spawnPercentage;
     bool isActive;
     bool usingFirstTexture;
+    EntityData entityData;
 
 public:
     Collectible(const CollectiblePrototype& prototypeRef, b2World* world, 

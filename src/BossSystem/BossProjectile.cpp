@@ -10,7 +10,8 @@ BossProjectile::BossProjectile(b2World* world, sf::Vector2f startPosition, sf::V
     , windowWidth(windowWidth)
     , windowHeight(windowHeight)
     , body(nullptr)
-    , active(true) {
+    , active(true)
+    , entityData(EntityType::PROJECTILE, this) {
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_kinematicBody;
@@ -28,7 +29,7 @@ BossProjectile::BossProjectile(b2World* world, sf::Vector2f startPosition, sf::V
     fixtureDef.restitution = 1.0f;
 
     body->CreateFixture(&fixtureDef);
-    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
 
     body->SetLinearVelocity(b2Vec2(velocity.x / SCALE, velocity.y / SCALE));
 

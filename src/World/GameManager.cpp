@@ -17,7 +17,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 1, 10.f);
 	gameMap.init(*world);
 
 	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
@@ -155,7 +155,7 @@ void GameManager::gameManagerUpdate()
 			std::remove_if(bullets.begin(), bullets.end(),
 				[](const Bullet& bullet) {
 					auto bounds = bullet.getBounds();
-					return bounds.position.y < -100.f;
+					return bounds.position.y < -100.f || !bullet.isActive();
 				}),
 			bullets.end()
 		);

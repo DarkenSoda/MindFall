@@ -10,7 +10,11 @@ public:
 
     sf::FloatRect getBounds() const;
 
+    bool isActive() const { return active; }
+    void setActive(bool state) { active = state; }
+
 private:
     sf::Sprite sprite;
     float speed;
+    bool active;
 };

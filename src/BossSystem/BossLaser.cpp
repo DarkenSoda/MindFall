@@ -15,14 +15,15 @@ BossLaser::BossLaser(b2World* world, float maxWidth, float height, float windowW
     , activeDuration(2.0f)
     , shrinkDuration(0.3f)
     , windowWidth(windowWidth)
-    , windowHeight(windowHeight) {
+    , windowHeight(windowHeight)
+    , entityData(EntityType::LASER, this) {
     
     b2BodyDef bodyDef;
     bodyDef.type = b2_kinematicBody;
     bodyDef.position.Set(0.f, 0.f);
     
     body = world->CreateBody(&bodyDef);
-    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
     
     laserShape.setOrigin({0.f, 0.f});
 
@@ -133,7 +134,7 @@ void BossLaser::updateCollider() {
         fixtureDef.friction = 0.0f;
         
         laserFixture = body->CreateFixture(&fixtureDef);
-        laserFixture->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+        laserFixture->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
     }
 }
 

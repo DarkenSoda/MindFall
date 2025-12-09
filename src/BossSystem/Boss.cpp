@@ -22,6 +22,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , laser(world, 110.f, 1080.f, windowWidth, windowHeight)
     , sprite(idleTexture)
     , hp(3)
+    , entityData(EntityType::BOSS, this)
 {
     laser.setExpandDuration(0.3f);
     laser.setActiveDuration(2.0f);
@@ -42,7 +43,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     fixtureDef.isSensor = true;
     body->CreateFixture(&fixtureDef);
 
-    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
 
     sf::Texture projectileTex;
     if (!projectileTex.loadFromFile("assets/boss_projectile.png")) {

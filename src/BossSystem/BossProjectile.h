@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
+#include "../EntityTypes.h"
+#include "../EntityData.h"
 
 class BossProjectile {
 private:
@@ -19,6 +21,7 @@ private:
     const float SCALE = 30.f;
     
     bool active;
+    EntityData entityData;
 
 public:
     BossProjectile(b2World* world, sf::Vector2f startPosition, sf::Vector2f startVelocity, 

@@ -11,6 +11,7 @@ Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* worl
     , isActive(true)
     , prototype(&prototypeRef)
     , sprite(prototypeRef.texture1)
+    , entityData(EntityType::COLLECTIBLE, this)
 {
     if (prototypeRef.type == CollectibleType::Score) {
         type = isReversed ? CollectibleType::Damage : CollectibleType::Score;
@@ -21,6 +22,8 @@ Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* worl
         usingFirstTexture = isReversed;
         sprite.setTexture(isReversed ? prototypeRef.texture1 : prototypeRef.texture2);
     }
+
+    entityData.type = (type == CollectibleType::Score) ? EntityType::COLLECTIBLE : EntityType::DAMAGE;
 
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
@@ -41,7 +44,7 @@ Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* worl
     fixtureDef.isSensor = true;
     fixtureDef.density = 1.0f; // Required for dynamic bodies
     body->CreateFixture(&fixtureDef);
-    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
 
     sprite.setPosition(startPosition);
 }
@@ -94,6 +97,8 @@ void Collectible::switchTexture() {
     
     // Switch type
     type = (type == CollectibleType::Score) ? CollectibleType::Damage : CollectibleType::Score;
+    entityData.type = (type == CollectibleType::Score) ? EntityType::COLLECTIBLE : EntityType::DAMAGE;
+    // body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&entityData);
 }
 
 void Collectible::setPosition(sf::Vector2f pos) {

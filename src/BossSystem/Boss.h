@@ -10,6 +10,8 @@
 #include "BossProjectile.h"
 #include "BossLaser.h"
 #include "BossAnimation.h"
+#include "../EntityTypes.h"
+#include "../EntityData.h"
 
 class Boss {
 private:
@@ -42,6 +44,7 @@ private:
     std::vector<sf::Texture> attackTextures;
     
     int hp;
+    EntityData entityData;
 
     const float SCALE = 30.f;
     
