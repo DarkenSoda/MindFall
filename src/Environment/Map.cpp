@@ -21,7 +21,7 @@ void Map::init(b2World& world) {
     float x = 1920.f / 2.f; 
     float y = 1080.f - (h / 2.f); 
 
-    m_videoBackground = std::make_unique<VideoBackground>("assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
+    m_videoBackground = std::make_unique<VideoBackground>("assets/VideoBackground/-", "frame", ".png", 3, 3.f, true);
 
     // Setup Visuals
     m_groundShape.setSize({w, h});

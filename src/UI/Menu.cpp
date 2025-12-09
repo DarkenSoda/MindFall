@@ -3,7 +3,7 @@
 Menu::Menu(float width, float height, bool exitMenu): m_bgSprite(m_bgTexture), exitMenu(exitMenu) 
 {
     
-    if (!m_bgTexture.loadFromFile("assets/images.jpeg")) {
+    if (!m_bgTexture.loadFromFile("assets/VideoBackground/-0.png")) {
         throw std::runtime_error("Failed to load background texture");
     }
     m_bgSprite.setTexture(m_bgTexture);

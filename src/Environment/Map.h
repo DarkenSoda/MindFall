@@ -25,6 +25,7 @@ private:
 
     std::vector<std::unique_ptr<ParallaxLayer>> m_parallaxLayers;
     std::unique_ptr<VideoBackground> m_videoBackground; 
+    std::unique_ptr<VideoBackground> m_ambientBackground; 
     sf::RectangleShape m_groundShape;
     b2Body* m_groundBody = nullptr;
     sf::Texture m_groundTexture;
