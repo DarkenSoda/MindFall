@@ -15,7 +15,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 1, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 60, 10.f);
 	gameMap.init(*world);
 
 	// Initialize HealthBar
