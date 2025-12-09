@@ -5,6 +5,7 @@
 #include "../World/EventHandler.h"
 #include "../Time.h"
 #include "../UI/Menu.h"
+#include "../UI/HealthBar.h"
 #include "../Environment/Map.h"
 
 class GameManager
@@ -27,6 +28,8 @@ private:
 	
 	Menu startMenu;
 	Menu gameOverMenu;
+	HealthBar* healthBar;
+	sf::Texture healthBarTexture;
 	
 	State currentState = State::MAIN_MENU;
 	Map gameMap;

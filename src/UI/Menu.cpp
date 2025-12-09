@@ -18,10 +18,10 @@ Menu::Menu(float width, float height, bool exitMenu): m_bgSprite(m_bgTexture), e
 
     
     if(!exitMenu)
-        m_btn1Texture.loadFromFile("assets/start.jpg");
+        m_btn1Texture.loadFromFile("assets/start.png");
 
     else
-        m_btn1Texture.loadFromFile("assets/tryAgain.jpeg");
+        m_btn1Texture.loadFromFile("assets/replay.png");
 
     if (!m_btn2Texture.loadFromFile("assets/exit.png")) {
         throw std::runtime_error("Failed to load button 2 texture");

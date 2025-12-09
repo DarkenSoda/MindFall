@@ -16,13 +16,14 @@ Player::Player(sf::Vector2f position, float moveSpeed)
     this->position = position;
     animations();
     rage = 1.0f;
-    multilyer = 20.5f;;
+    multilyer = 20.5f;
     rageDirection = false;
     maximumRage = 100.0f;
     minimumRage = 0.0f;
     timeToEmptyRage = 5.0f;
     rageDownCooldown = 1.0f;
     playerParts = new PlayerParts(position);
+    lives = 6;
 }
 
 Player::~Player()
@@ -71,6 +72,18 @@ float Player::getRage()
     return rage;
 }
 
+int Player::getLives() const
+{
+    return lives;
+}
+
+void Player::takeDamage(int damage)
+{
+    lives -= damage;
+    if (lives < 0)
+        lives = 0;
+}
+
 sf::FloatRect Player::getGlobalBound()
 {
     return animator.CurrentAnimaton().getGlobalBounds();
@@ -85,7 +98,7 @@ void Player::drawPlayer(sf::RenderWindow& window)
 
 void Player::update(float deltatime)
 {
-    if (rage>=maximumRage)
+    if (rage >= maximumRage)
     {
         rageDirection = true;
         rage = 100.0f;
