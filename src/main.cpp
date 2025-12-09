@@ -5,6 +5,7 @@
 #include <cmath>
 #include "UI/menu.h"
 #include "Environment/Map.h"
+#include "UI/VideoBackground.h"
 
 enum class State {
     MAIN_MENU,
@@ -19,6 +20,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
+    // folder, prefix, extension, count, fps
+    VideoBackground video("frames", "frame", ".png", 120, 30.f);
 
     sf::Texture bgMain, bgGameOver;
     sf::Texture btnStart, btnQuit, btnRetry;
