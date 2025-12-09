@@ -45,6 +45,10 @@ void EventHandler::handleEvent(float dt)
         eventDone = false;
         flipCameraEvent(0.0f);
         inputHandler->setDirection(false);
+        if (spawner) {
+            spawner->resetType();
+
+        }
     }
 
     if (rotating)
@@ -79,5 +83,11 @@ void EventHandler::flipCameraEvent(float angle)
 
 void EventHandler::flipCollectableColors()
 {
-    // Not implemented yet
+    if (spawner) {
+        spawner->switchAllCollectible();
+    }
+}
+
+void EventHandler::setSpawner(WorldSpawner* spawner) {
+    this->spawner = spawner;
 }

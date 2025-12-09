@@ -137,3 +137,14 @@ void WorldSpawner::switchAllCollectible() {
         collectible->switchTexture();
     }
 }
+
+void WorldSpawner::resetType() {
+    spawnTypeReversed = false;
+
+    for (auto& collectible : collectibles) {
+        const CollectiblePrototype* prototype = collectible->getPrototype();
+        if (prototype && collectible->getType() != prototype->type) {
+            collectible->switchTexture();
+        }
+    }
+}

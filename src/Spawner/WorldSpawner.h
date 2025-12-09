@@ -32,4 +32,5 @@ public:
 
     void removeInactiveCollectibles();
     void switchAllCollectible();
+    void resetType();
 };

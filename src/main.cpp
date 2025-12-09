@@ -7,9 +7,7 @@
 #include "Player/Player.h"
 #include "World/EventHandler.h"
 #include "Player/Bullet.h"
-#include "Spawner/WorldSpawner.h"
 #include <cmath>
-#include "BossSystem/Boss.h"
 
 // Constants
 const float WINDOW_WIDTH = 1920.f;
@@ -26,8 +24,6 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
 
-    WorldSpawner spawner(&world);
-
     InputHandler inputHandler; 
     Player player({ 200.f, 800.f }, 200.f);
 
@@ -38,12 +34,10 @@ int main() {
 
         gameManager.handleEvents();
 
-        spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
         window.clear();
         window.setView(gameView);
         gameManager.gameManagerUpdate();
         gameManager.gameManagerRender();
-        spawner.draw(window);
         window.display();
     }
 
