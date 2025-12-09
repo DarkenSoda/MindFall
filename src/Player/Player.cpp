@@ -29,7 +29,7 @@ Player::Player(b2World* world, sf::Vector2f position, sf::Vector2f size, float m
     timeToEmptyRage = 5.0f;
     rageDownCooldown = 1.0f;
     playerParts = new PlayerParts(position);
-    lives = 6;
+    lives = 5;
 	state = "idle";
     
     // Create Box2D body

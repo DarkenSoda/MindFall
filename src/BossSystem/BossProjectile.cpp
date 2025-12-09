@@ -14,7 +14,8 @@ BossProjectile::BossProjectile(b2World* world, sf::Vector2f startPosition, sf::V
     , entityData(EntityType::PROJECTILE, this) {
 
     b2BodyDef bodyDef;
-    bodyDef.type = b2_kinematicBody;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.gravityScale = 0.0f;
     bodyDef.position.Set(startPosition.x / SCALE, startPosition.y / SCALE);
 
     body = world->CreateBody(&bodyDef);

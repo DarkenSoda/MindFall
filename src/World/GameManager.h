@@ -12,6 +12,7 @@
 #include "../Spawner/WorldSpawner.h"
 #include "../BossSystem/Boss.h"
 #include "../UI/RageBar.h"
+#include "../Particle.h"
 
 class GameManager {
 public:
@@ -55,6 +56,12 @@ private:
     RageBar* rageBar;
     sf::Texture rageBarTexture;
 
+	// Particle system
+	std::vector<Particle> particles;
+	
+	// Random number generator for particles
+	std::mt19937 randomGen;
+
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
 	~GameManager();
@@ -67,4 +74,9 @@ public:
 
 	// Renders the current state
 	void gameManagerRender();
+
+	// Game state modification functions
+	void applyDamageToPlayer();
+	void applyDamageToBoss();
+	void spawnParticleAt(sf::Vector2f position, sf::Color color, int count = 20);
 };

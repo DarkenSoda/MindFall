@@ -1,5 +1,7 @@
 #include <iostream>
 #include <algorithm>
+#include <random>
+#include <cmath>
 #include "GameManager.h"
 
 GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world)
@@ -8,7 +10,8 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, 162.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
 	spawner(world),
-	shootCooldown(sf::seconds(0.3f))
+	shootCooldown(sf::seconds(0.3f)),
+	randomGen(std::random_device{}())
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -24,7 +27,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	{
 		throw std::runtime_error("Failed to load health bar texture from assets/player/hp.png");
 	}
-	healthBar = new HealthBar(healthBarTexture, 6);
+	healthBar = new HealthBar(healthBarTexture, 5);
 
 	if (!bulletTexture.loadFromFile("assets/player/bullet.png")) {
 		throw std::runtime_error("Failed to load bullet texture from assets/player/bullet.png");
@@ -155,6 +158,18 @@ void GameManager::gameManagerUpdate()
 				}),
 			bullets.end()
 		);
+
+		// Update particles
+		for (auto& particle : particles) {
+			particle.update(Utils::Time::deltaTime);
+		}
+
+		// Remove dead particles
+		particles.erase(
+			std::remove_if(particles.begin(), particles.end(),
+				[](const Particle& p) { return p.isDead(); }),
+			particles.end()
+		);
 	}
 	if(currentState == State::BEGINING_SCENE)
 	{
@@ -188,6 +203,11 @@ void GameManager::gameManagerRender()
             bullet.render(*window);
         }
 
+		// Draw particles with game view
+		for (const auto& particle : particles) {
+			const_cast<Particle&>(particle).draw(*window);
+		}
+
         window->setView(window->getDefaultView());
 
         if (healthBar != nullptr) {
@@ -203,4 +223,45 @@ void GameManager::gameManagerRender()
         window->setView(window->getDefaultView());
         videoBg->draw(*window);
     }
+	else if (currentState == State::GAME_OVER)
+	{
+		window->setView(window->getDefaultView());
+		gameOverMenu.draw(*window);
+	}
+}
+
+void GameManager::applyDamageToPlayer()
+{
+	player->takeDamage(1);
+	
+	if (player->getLives() <= 0) {
+		currentState = State::GAME_OVER;
+	}
+}
+
+void GameManager::applyDamageToBoss()
+{
+	// Boss damage logic will be handled by the Boss class
+	boss.takeDamage();
+}
+
+void GameManager::spawnParticleAt(sf::Vector2f position, sf::Color color, int count)
+{
+	std::uniform_real_distribution<float> angleDist(0.0f, 2.0f * 3.14159f);
+	std::uniform_real_distribution<float> speedDist(50.0f, 200.0f);
+	std::uniform_real_distribution<float> lifeDist(0.5f, 1.5f);
+
+	for (int i = 0; i < count; ++i) {
+		float angle = angleDist(randomGen);
+		float speed = speedDist(randomGen);
+		sf::Vector2f velocity(std::cos(angle) * speed, std::sin(angle) * speed);
+
+		// Randomize color slightly for variety
+		sf::Color particleColor = color;
+		particleColor.r = std::min(255, static_cast<int>(color.r * (0.8f + 0.4f * static_cast<float>(rand()) / RAND_MAX)));
+		particleColor.g = std::min(255, static_cast<int>(color.g * (0.8f + 0.4f * static_cast<float>(rand()) / RAND_MAX)));
+		particleColor.b = std::min(255, static_cast<int>(color.b * (0.8f + 0.4f * static_cast<float>(rand()) / RAND_MAX)));
+
+		particles.emplace_back(position, velocity, particleColor, lifeDist(randomGen));
+	}
 }

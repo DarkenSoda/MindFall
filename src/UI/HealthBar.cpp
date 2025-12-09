@@ -10,7 +10,7 @@ HealthBar::HealthBar(const sf::Texture& textureRef, int maxHealth)
 
     sf::Vector2u textureSize = texture.getSize();
 
-    frameWidth = textureSize.x / maxHealth;
+    frameWidth = textureSize.x / (maxHealth + 1);
     frameHeight = textureSize.y;
 
     float centerX = 100.0f;
@@ -30,7 +30,7 @@ HealthBar::~HealthBar()
 
 void HealthBar::setHealth(int currentHealth)
 {
-    int index = std::clamp(maxHP - currentHealth, 0, maxHP - 1);
+    int index = std::clamp(maxHP - currentHealth, 0, maxHP);
 
     int left = index * frameWidth;
 

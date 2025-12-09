@@ -24,7 +24,7 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
 
     InputHandler inputHandler;
-    Player player(&world, { WINDOW_WIDTH / 2.f, 800.f }, { 50.f, 90.f }, 250.f, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Player player(&world, { WINDOW_WIDTH / 2.f, 800.f }, { 50.f, 90.f }, 300.f, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     GameManager gameManager(&window, &inputHandler, &player, &gameView, &world);
 

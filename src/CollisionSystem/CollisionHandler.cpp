@@ -104,8 +104,8 @@ void CollisionHandler::handlePlayerDamage(EntityData* playerData, EntityData* da
         sf::Vector2f pos = collectible->getPosition();
         collectible->setActive(false);
 
-        // gameManager->applyDamageToPlayer();
-        // gameManager->spawnParticleAt(pos, sf::Color::Red);
+        gameManager->applyDamageToPlayer();
+        gameManager->spawnParticleAt(pos, sf::Color::Red);
     }
 }
 
@@ -115,13 +115,13 @@ void CollisionHandler::handlePlayerProjectile(EntityData* playerData, EntityData
         sf::Vector2f pos = projectile->getPosition();
         projectile->setActive(false);
 
-        // gameManager->applyDamageToPlayer();
-        // gameManager->spawnParticleAt(pos, sf::Color::Magenta);
+        gameManager->applyDamageToPlayer();
+        gameManager->spawnParticleAt(pos, sf::Color::Magenta);
     }
 }
 
 void CollisionHandler::handlePlayerLaser(EntityData* playerData, EntityData* laserData) {
-    // gameManager->applyDamageToPlayer();
+    gameManager->applyDamageToPlayer();
 }
 
 
@@ -134,8 +134,8 @@ void CollisionHandler::handleBossHit(EntityData* bossData, EntityData* collectib
         bullet->setActive(false);
 
         Boss* boss = static_cast<Boss*>(bossData->objectPtr);
-        // gameManager->applyDamageToBoss();
-        // gameManager->spawnParticleAt(pos, sf::Color(128, 128, 128)); // gray
+        gameManager->applyDamageToBoss();
+        gameManager->spawnParticleAt(pos, sf::Color(128, 128, 128)); // gray
     }
 }
 
@@ -147,7 +147,7 @@ void CollisionHandler::handleGroundCollectible(EntityData* groundData, EntityDat
         sf::Vector2f pos = collectible->getPosition();
         collectible->setActive(false);
 
-        // gameManager->spawnParticleAt(pos, sf::Color::Green);
+        gameManager->spawnParticleAt(pos, sf::Color::Green);
     }
 }
 
@@ -157,7 +157,7 @@ void CollisionHandler::handleGroundDamage(EntityData* groundData, EntityData* da
         sf::Vector2f pos = collectible->getPosition();
         collectible->setActive(false);
 
-        // gameManager->spawnParticleAt(pos, sf::Color::Red);
+        gameManager->spawnParticleAt(pos, sf::Color::Red);
     }
 }
 
@@ -167,6 +167,6 @@ void CollisionHandler::handleGroundProjectile(EntityData* groundData, EntityData
         sf::Vector2f pos = projectile->getPosition();
         projectile->setActive(false);
 
-        // gameManager->spawnParticleAt(pos, sf::Color::Magenta);
+        gameManager->spawnParticleAt(pos, sf::Color::Magenta);
     }
 }
