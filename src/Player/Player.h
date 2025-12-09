@@ -21,6 +21,7 @@ private:
     float minimumRage;
     float timeToEmptyRage;
     float rageDownCooldown;
+    int lives;
 
     void animations();  
 public:
@@ -38,7 +39,11 @@ public:
 
     sf::FloatRect getGlobalBound();
 
-   void drawPlayer(sf::RenderWindow& window);
+    void drawPlayer(sf::RenderWindow& window);
 
     void update(float deltatime);
+
+    int getLives() const;
+
+    void takeDamage(int damage = 1);
 };
