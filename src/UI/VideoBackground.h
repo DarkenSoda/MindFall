@@ -13,6 +13,7 @@ public:
         float fps,
         bool loop = false
     );
+    bool isPlaying = false;
 
     void play();
     void stop();
@@ -27,6 +28,5 @@ private:
     float frameTime;   
     float timer = 0.f;
     size_t currentFrame = 0;
-    bool isPlaying = false;
     bool loop;
 };

@@ -13,7 +13,8 @@ public:
 	enum class State {
 		MAIN_MENU,
 		PLAYING,
-		GAME_OVER
+		GAME_OVER,
+		BEGINING_SCENE
 	};
 
 private:
@@ -29,7 +30,7 @@ private:
 	
 	State currentState = State::MAIN_MENU;
 	Map gameMap;
-
+	VideoBackground* videoBg;
 	// Constants for view resizing
 	const float WINDOW_WIDTH = 1920.f;
 	const float WINDOW_HEIGHT = 1080.f;

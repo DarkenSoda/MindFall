@@ -12,7 +12,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	// Initialize the map with the world passed to GM
 	gameMap.init(*world);
 }
@@ -76,7 +76,10 @@ void GameManager::gameManagerUpdate()
 	{
 		int action = startMenu.handleInput(*window);
 		if (action == 1) {
-			currentState = State::PLAYING;
+			currentState = State::BEGINING_SCENE;
+			
+			videoBg->play();
+
 		}
 		else if (action == 2) {
 			window->close();
@@ -107,7 +110,22 @@ void GameManager::gameManagerUpdate()
 		player->update(Utils::Time::deltaTime);
 		gameMap.update(Utils::Time::deltaTime);
 	}
+	if(currentState == State::BEGINING_SCENE)
+	{
+		
+		videoBg->update(Utils::Time::deltaTime);
+		cout << videoBg->isPlaying << "\n";
+		if(!(videoBg->isPlaying))
+		{
+			currentState = State::PLAYING;
+			gameMap.playVideo();
+		}
+		
+	
+		
+	}
 }
+	
 
 void GameManager::gameManagerRender()
 {
@@ -119,17 +137,23 @@ void GameManager::gameManagerRender()
 		window->setView(window->getDefaultView());
 		startMenu.draw(*window);
 	}
-	else if (currentState == State::PLAYING)
+	 if (currentState == State::PLAYING)
 	{
-
+		//cout <<"Play\n";
 		window->setView(*gameView);
 		
 		gameMap.draw(*window);
-		player->drawPlayer(*window);
+		// player->drawPlayer(*window);
 	}
-	else if (currentState == State::GAME_OVER)
+	//  if (currentState == State::GAME_OVER)
+	// {
+	// 	window->setView(window->getDefaultView());
+	// 	gameOverMenu.draw(*window);
+	// }
+	 if (currentState == State::BEGINING_SCENE)
 	{
+		cout << "Drawing video background\n";
 		window->setView(window->getDefaultView());
-		gameOverMenu.draw(*window);
+		videoBg->draw(*window);
 	}
 }
