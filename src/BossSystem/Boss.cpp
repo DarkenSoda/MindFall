@@ -11,7 +11,6 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , currentAnimation("")
     , currentFrame(0)
     , animationTimer(0.f)
-    , playerPosition(0.f, 0.f)
     , moveSpeed(400.f)
     , movementDirection(1.0f)
     , leftBound(0.f)
@@ -33,7 +32,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     bodyDef.position.Set(startPosition.x / SCALE, startPosition.y / SCALE);
 
     body = world->CreateBody(&bodyDef);
-    
+
     b2PolygonShape boxShape;
     boxShape.SetAsBox((bossSize.x / 2.f) / SCALE, (bossSize.y / 2.f) / SCALE, b2Vec2(0.f, -50.f / SCALE), 0.f);
 
@@ -110,10 +109,6 @@ void Boss::playAnimation(const std::string& name) {
         sprite.setOrigin({ anim.frameWidth / 2.f, anim.frameHeight / 2.f });
         sprite.setScale({0.2f, 0.2f});
     }
-}
-
-void Boss::setPlayerPosition(sf::Vector2f playerPos) {
-    playerPosition = playerPos;
 }
 
 void Boss::setBounds(float left, float right) {

@@ -8,7 +8,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, 162.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
 	spawner(world),
-	  shootCooldown(sf::seconds(0.3f))
+	shootCooldown(sf::seconds(0.3f))
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -17,7 +17,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 60, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	gameMap.init(*world);
 
 	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
