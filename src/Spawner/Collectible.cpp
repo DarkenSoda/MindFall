@@ -12,7 +12,6 @@ Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* worl
     , prototype(&prototypeRef)
     , sprite(prototypeRef.texture1)
 {
-    // Determine the actual type based on prototype and reversed state
     if (prototypeRef.type == CollectibleType::Score) {
         type = isReversed ? CollectibleType::Damage : CollectibleType::Score;
         usingFirstTexture = !isReversed;

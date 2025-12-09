@@ -24,7 +24,6 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , sprite(idleTexture)
     , hp(3)
 {
-
     laser.setExpandDuration(0.3f);
     laser.setActiveDuration(2.0f);
     laser.setShrinkDuration(0.3f);
@@ -83,7 +82,6 @@ bool Boss::loadSprites(const std::string& idlePath, const std::string& laserPath
         return false;
     }
 
-    // Add animations with their respective textures and frame counts
     addAnimation("idle", idleTexture, 5, 0.15f, true);
     addAnimation("laser", laserTexture, 9, 0.2f, false);
     addAnimation("projectile", projectileTexture, 5, 0.2f, false);
