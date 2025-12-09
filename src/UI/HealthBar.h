@@ -10,8 +10,6 @@ public:
     void setHealth(int currentHealth);
     void render(sf::RenderWindow& window);
     
-    // Debug helper
-    void debugInfo() const;
 
 private:
     sf::Sprite sprite;

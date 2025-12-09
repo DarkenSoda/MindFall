@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
+#include <vector>
 #include "../Player/Player.h"
+#include "../Player/Bullet.h"
 #include "../World/EventHandler.h"
 #include "../Time.h"
 #include "../UI/Menu.h"
@@ -30,8 +32,14 @@ private:
 	
 	Menu startMenu;
 	Menu gameOverMenu;
-	HealthBar* healthBar;
+	HealthBar* healthBar;	
 	sf::Texture healthBarTexture;
+	
+	// Bullet management
+	std::vector<Bullet> bullets;
+	sf::Texture bulletTexture;
+	sf::Clock shootTimer;
+	sf::Time shootCooldown;
 	
 	State currentState = State::MAIN_MENU;
 	Map gameMap;

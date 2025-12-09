@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "GameManager.h"
 
 GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world)
@@ -6,7 +7,8 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	gameOverMenu(1920, 1080, true),
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, 162.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
-	spawner(world)
+	spawner(world),
+	  shootCooldown(sf::seconds(0.3f))
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -15,11 +17,17 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 60, 10.f);
 	gameMap.init(*world);
 
-	if (healthBarTexture.loadFromFile("assets/player/hb.png")) {
-		healthBar = new HealthBar(healthBarTexture, 6);
+	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
+	{
+		throw std::runtime_error("Failed to load health bar texture from assets/player/hp.png");
+	}
+	healthBar = new HealthBar(healthBarTexture, 6);
+
+	if (!bulletTexture.loadFromFile("assets/player/bullet.png")) {
+		throw std::runtime_error("Failed to load bullet texture from assets/player/bullet.png");
 	}
 
 	this->eventHandler->setSpawner(&spawner);
@@ -46,6 +54,16 @@ void GameManager::handleEvents()
 				window->close();
 
 			if (currentState == State::PLAYING) {
+				// Spacebar to shoot bullets upward
+				if (keyEvent->code == sf::Keyboard::Key::Space) {
+					if (shootTimer.getElapsedTime() >= shootCooldown) {
+						sf::Vector2f playerPos = player->getPlayerPosition();
+						// Spawn bullet at player position
+						bullets.emplace_back(bulletTexture, playerPos.x + 45.f, playerPos.y);
+						shootTimer.restart();
+					}
+				}
+				
 				if (keyEvent->code == sf::Keyboard::Key::K) {
 					gameMap.playVideo();
 				}
@@ -120,6 +138,21 @@ void GameManager::gameManagerUpdate()
 			int currentHealth = player->getLives();
 			healthBar->setHealth(currentHealth);
 		}
+
+		// Update all bullets
+		for (auto& bullet : bullets) {
+			bullet.update();
+		}
+
+		// Remove bullets that are off-screen
+		bullets.erase(
+			std::remove_if(bullets.begin(), bullets.end(),
+				[](const Bullet& bullet) {
+					auto bounds = bullet.getBounds();
+					return bounds.position.y < -100.f;
+				}),
+			bullets.end()
+		);
 	}
 	if(currentState == State::BEGINING_SCENE)
 	{
@@ -147,6 +180,11 @@ void GameManager::gameManagerRender()
 		spawner.draw(*window);
 		boss.render(*window);
 		player->drawPlayer(*window);
+
+		// Draw bullets with game view
+		for (auto& bullet : bullets) {
+			bullet.render(*window);
+		}
 
 		// Switch to default view for UI layer
 		window->setView(window->getDefaultView());
