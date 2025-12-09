@@ -17,9 +17,10 @@ Animation::Animation(std::string path, float switchTime, int frameCount)
     sizeX = size.x / frameCount;
     sizeY = size.y - 3;
 
-    sprite.setScale(sf::Vector2f(0.05f, 0.05f));
+    sprite.setScale(sf::Vector2f(0.05f,0.05f));
     sprite.setTexture(texture);
-    sprite.setTextureRect(sf::IntRect({ 15, 15 }, { sizeX, sizeY }));
+    sprite.setTextureRect(sf::IntRect({ 15, 15 }, { sizeX, sizeY}));
+
 }
 
 void Animation::Play(float deltaTime, sf::Vector2f position)
@@ -32,7 +33,7 @@ void Animation::Play(float deltaTime, sf::Vector2f position)
         if (frame >= frameCount)
             frame = 0;
 
-        sprite.setTextureRect(sf::IntRect({ (frame * sizeX), 15 }, { sizeX, sizeY }));
+        sprite.setTextureRect(sf::IntRect({ (frame * sizeX) , 15 }, { sizeX, sizeY }));
         timer = 0.0f;
     }
 }

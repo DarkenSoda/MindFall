@@ -34,7 +34,7 @@ int main() {
     sf::Texture bulletTex;
     if (!bulletTex.loadFromFile("assets/player/bullet.png")) {
         std::cout << "Error loading bullet.png" << std::endl;
-        // In a real game, handle error. For now, we continue or exit.
+        // In a real game, ha`ndle error. For now, we continue or exit.
         return -1;
     }
 

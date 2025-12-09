@@ -6,7 +6,8 @@ void Player::animations()
 {
     animator
         .SetAnimation("idle", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
-        .SetAnimation("stress", std::make_unique<Animation>("assets/player/stressed.png", 0.125f, 1));
+        .SetAnimation("left", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
+        .SetAnimation("right", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1));
 }
 
 Player::Player(sf::Vector2f position, float moveSpeed)
@@ -22,8 +23,6 @@ Player::Player(sf::Vector2f position, float moveSpeed)
     timeToEmptyRage = 5.0f;
     rageDownCooldown = 1.0f;
     playerParts = new PlayerParts(position);
-    state = "idle";
-    lives = 5;
 }
 
 Player::~Player()
@@ -39,19 +38,22 @@ void Player::move(PlayerCommand cmd, float deltaTime)
     case PlayerCommand::moveLeft:
         position.x -= moveSpeed * deltaTime;
         playerParts->updateParts(position);
+        s = "left";
         break;
 
     case PlayerCommand::moveRight:
 
         position.x += moveSpeed * deltaTime;
         playerParts->updateParts(position);
+        s = "right";
         break;
 
     default:
+        s = "idle";
         playerParts->updateParts(position);
         break;
     }
-    animator.PlayAnimation(state, deltaTime, position);
+    animator.PlayAnimation(s, deltaTime, position);
 }
 
 void Player::setPlayerPosition(sf::Vector2f position)
@@ -85,18 +87,14 @@ void Player::update(float deltatime)
 {
     if (rage>=maximumRage)
     {
-        state = "stress";
         rageDirection = true;
         rage = 100.0f;
-        playerParts->setRotationSpeed(20.0f);
     }
     if (rage <= minimumRage)
     {
-        state = "idle";
         rageDirection = false;
         multilyer = 20.5f;
         rage = 0.0f;
-        playerParts->setRotationSpeed(10.0f);
     }
     if (!rageDirection)
     {

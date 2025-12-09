@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <stdexcept>
 
 using namespace std;
 using namespace sf;
@@ -22,6 +24,5 @@ public:
 	void drawBehindParts(RenderWindow& window);
 	void drawFrontParts(RenderWindow& window);
 	void rotateWheels();
-	void setRotationSpeed(float speed);
 };
 

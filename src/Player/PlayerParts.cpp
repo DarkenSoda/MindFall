@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "PlayerParts.h"
 
 PlayerParts::PlayerParts(sf::Vector2f position)
@@ -129,9 +128,4 @@ void PlayerParts::drawFrontParts(sf::RenderWindow& window)
 void PlayerParts::rotateWheels()
 {
 
-}
-
-void PlayerParts::setRotationSpeed(float speed)
-{
-    this->rotationSpeed = speed;
 }

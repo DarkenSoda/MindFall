@@ -108,17 +108,13 @@ void GameManager::gameManagerUpdate()
 
 void GameManager::gameManagerRender()
 {
-
-
 	if (currentState == State::MAIN_MENU)
 	{
-
 		window->setView(window->getDefaultView());
 		startMenu.draw(*window);
 	}
 	else if (currentState == State::PLAYING)
 	{
-
 		window->setView(*gameView);
 		
 		gameMap.draw(*window);

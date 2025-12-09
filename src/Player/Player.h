@@ -21,14 +21,10 @@ private:
     float minimumRage;
     float timeToEmptyRage;
     float rageDownCooldown;
-    string state;
-    int lives;
 
     void animations();  
 public:
     Player(sf::Vector2f position, float moveSpeed);
-
-    
 
     ~Player();
 
