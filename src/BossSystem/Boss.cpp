@@ -112,10 +112,6 @@ void Boss::playAnimation(const std::string& name) {
     }
 }
 
-void Boss::setPlayerPosition(sf::Vector2f playerPos) {
-    playerPosition = playerPos;
-}
-
 void Boss::setBounds(float left, float right) {
     leftBound = left;
     rightBound = right;

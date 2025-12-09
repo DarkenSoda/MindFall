@@ -26,9 +26,7 @@ private:
     std::string currentAnimation;
     int currentFrame;
     float animationTimer;
-    
-    sf::Vector2f playerPosition;
-    
+        
     float moveSpeed;
     float movementDirection;
     float leftBound;
@@ -61,7 +59,6 @@ public:
     void addAnimation(const std::string& name, sf::Texture& texture, int frameCount, float switchTime = 0.1f, bool loop = true);
     void playAnimation(const std::string& name);
     
-    void setPlayerPosition(sf::Vector2f playerPos);
     void setBounds(float left, float right);
     void setMoveSpeed(float speed);
     void setAttackInterval(float interval);
