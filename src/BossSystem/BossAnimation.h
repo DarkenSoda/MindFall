@@ -1,12 +1,15 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 struct BossAnimation {
-    int row;
+    sf::Texture* texture;
     int frameCount;
+    int frameWidth;
+    int frameHeight;
     float switchTime;
     bool loop;
 
-    BossAnimation(int r = 0, int fc = 1, float st = 0.1f, bool l = true)
-        : row(r), frameCount(fc), switchTime(st), loop(l) {
+    BossAnimation(sf::Texture* tex = nullptr, int fc = 1, int fw = 0, int fh = 0, float st = 0.1f, bool l = true)
+        : texture(tex), frameCount(fc), frameWidth(fw), frameHeight(fh), switchTime(st), loop(l) {
     }
 };

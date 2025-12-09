@@ -17,8 +17,6 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
-
-    Boss boss(&world, sf::Vector2f(WINDOW_WIDTH / 2.f, 100.f), sf::Vector2f(400.f, 180.f), WINDOW_WIDTH, WINDOW_HEIGHT);
  
     while (window.isOpen()) {
         Utils::Time::Update();
@@ -57,13 +55,10 @@ int main() {
             }
         }
 
-        boss.update(Utils::Time::deltaTime);
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
         window.clear();
         window.setView(gameView);
-
-        boss.render(window);
 
         window.display();
     }

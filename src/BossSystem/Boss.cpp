@@ -8,12 +8,9 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , position(startPosition)
     , size(bossSize)
     , body(nullptr)
-    , sprite(spriteSheet)
     , currentAnimation("")
     , currentFrame(0)
     , animationTimer(0.f)
-    , frameWidth(0)
-    , frameHeight(0)
     , playerPosition(0.f, 0.f)
     , moveSpeed(400.f)
     , movementDirection(1.0f)
@@ -23,7 +20,10 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , attackInterval(3.0f)
     , windowWidth(windowWidth)
     , windowHeight(windowHeight)
-    , laser(world, 110.f, 1080.f, windowWidth, windowHeight) {
+    , laser(world, 110.f, 1080.f, windowWidth, windowHeight)
+    , sprite(idleTexture)
+    , hp(3)
+{
 
     laser.setExpandDuration(0.3f);
     laser.setActiveDuration(2.0f);
@@ -57,11 +57,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
 
     attackTextures.push_back(projectileTex);
 
-    loadSpriteSheet("assets/boss.png");
-
-    addAnimation("idle", 0, 5, 0.15f, true);
-    addAnimation("laser", 1, 9, 0.2f, false);
-    addAnimation("projectile", 2, 5, 0.2f, false);
+    loadSprites("assets/boss1.png", "assets/boss2.png", "assets/boss3.png");
 
     playAnimation("idle");
 }
@@ -73,24 +69,33 @@ Boss::~Boss() {
     }
 }
 
-bool Boss::loadSpriteSheet(const std::string& texturePath) {
-    if (!spriteSheet.loadFromFile(texturePath)) {
-        std::cerr << "Failed to load boss sprite sheet: " << texturePath << std::endl;
+bool Boss::loadSprites(const std::string& idlePath, const std::string& laserPath, const std::string& projectilePath) {
+    if (!idleTexture.loadFromFile(idlePath)) {
+        std::cerr << "Failed to load boss idle texture: " << idlePath << std::endl;
         return false;
     }
-    this->frameWidth = spriteSheet.getSize().x / 9;
-    this->frameHeight = spriteSheet.getSize().y / 3;
+    if (!laserTexture.loadFromFile(laserPath)) {
+        std::cerr << "Failed to load boss laser texture: " << laserPath << std::endl;
+        return false;
+    }
+    if (!projectileTexture.loadFromFile(projectilePath)) {
+        std::cerr << "Failed to load boss projectile texture: " << projectilePath << std::endl;
+        return false;
+    }
 
-    sprite.setTexture(spriteSheet);
-    sprite.setTextureRect(sf::IntRect({0, 0}, {frameWidth, frameHeight}));
-    sprite.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
-    sprite.setScale({0.2f, 0.2f});
+    // Add animations with their respective textures and frame counts
+    addAnimation("idle", idleTexture, 5, 0.15f, true);
+    addAnimation("laser", laserTexture, 9, 0.2f, false);
+    addAnimation("projectile", projectileTexture, 5, 0.2f, false);
 
     return true;
 }
 
-void Boss::addAnimation(const std::string& name, int row, int frameCount, float switchTime, bool loop) {
-    animations[name] = BossAnimation(row, frameCount, switchTime, loop);
+void Boss::addAnimation(const std::string& name, sf::Texture& texture, int frameCount, float switchTime, bool loop) {
+    int frameWidth = texture.getSize().x / frameCount;
+    int frameHeight = texture.getSize().y;
+    
+    animations[name] = BossAnimation(&texture, frameCount, frameWidth, frameHeight, switchTime, loop);
 }
 
 void Boss::playAnimation(const std::string& name) {
@@ -102,7 +107,10 @@ void Boss::playAnimation(const std::string& name) {
         animationTimer = 0.f;
         
         const BossAnimation& anim = animations[name];
-        sprite.setTextureRect(sf::IntRect({0, anim.row * frameHeight}, {frameWidth, frameHeight}));
+        sprite.setTexture(*anim.texture);
+        sprite.setTextureRect(sf::IntRect({0, 0}, {anim.frameWidth, anim.frameHeight}));
+        sprite.setOrigin({ anim.frameWidth / 2.f, anim.frameHeight / 2.f });
+        sprite.setScale({0.2f, 0.2f});
     }
 }
 
@@ -180,8 +188,8 @@ void Boss::updateAnimation(float deltaTime) {
         }
 
         sprite.setTextureRect(sf::IntRect(
-            {currentFrame * frameWidth, anim.row * frameHeight},
-            {frameWidth, frameHeight}
+            {currentFrame * anim.frameWidth, 0},
+            {anim.frameWidth, anim.frameHeight}
         ));
         
         animationTimer = 0.f;
@@ -276,4 +284,10 @@ void Boss::render(sf::RenderWindow& window) {
     debugBox.setOutlineColor(sf::Color(0, 255, 0, 255));
     debugBox.setOutlineThickness(2.f);
     window.draw(debugBox);
+}
+
+void Boss::takeDamage() {
+    if (hp > 0) {
+        hp--;
+    }
 }

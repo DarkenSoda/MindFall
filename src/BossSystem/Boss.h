@@ -18,15 +18,14 @@ private:
     sf::Vector2f position;
     sf::Vector2f size;
     
-    sf::Texture spriteSheet;
+    sf::Texture idleTexture;
+    sf::Texture laserTexture;
+    sf::Texture projectileTexture;
     sf::Sprite sprite;
     std::map<std::string, BossAnimation> animations;
     std::string currentAnimation;
     int currentFrame;
     float animationTimer;
-    
-    int frameWidth;
-    int frameHeight;
     
     sf::Vector2f playerPosition;
     
@@ -43,6 +42,8 @@ private:
     float windowHeight;
 
     std::vector<sf::Texture> attackTextures;
+    
+    int hp;
 
     const float SCALE = 30.f;
     
@@ -56,8 +57,8 @@ public:
     Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, float windowWidth, float windowHeight);
     ~Boss();
 
-    bool loadSpriteSheet(const std::string& texturePath);
-    void addAnimation(const std::string& name, int row, int frameCount, float switchTime = 0.1f, bool loop = true);
+    bool loadSprites(const std::string& idlePath, const std::string& laserPath, const std::string& projectilePath);
+    void addAnimation(const std::string& name, sf::Texture& texture, int frameCount, float switchTime = 0.1f, bool loop = true);
     void playAnimation(const std::string& name);
     
     void setPlayerPosition(sf::Vector2f playerPos);
@@ -68,6 +69,9 @@ public:
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
     
+    void takeDamage();
+    
+    int getHP() const { return hp; }
     sf::Vector2f getPosition() const { return position; }
     b2Body* getBody() const { return body; }
 };
