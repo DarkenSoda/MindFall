@@ -6,7 +6,6 @@
 #include "Player/InputHandler.h" 
 #include "Player/Player.h"
 #include "World/EventHandler.h"
-#include "World/GameManager.h"
 #include "Player/Bullet.h"
 
 // Constants
@@ -51,11 +50,13 @@ int main() {
         // 1. Handle Events (Inputs, Resize, Window Close)
         gameManager.handleEvents();
 
-
         gameManager.gameManagerUpdate();
 
         // 3. Render
         window.clear();
+        for (auto& bullet : bullets) {
+            bullet.render(window);
+        }
         player.drawPlayer(window);
         window.setView(gameView);
         window.display();
