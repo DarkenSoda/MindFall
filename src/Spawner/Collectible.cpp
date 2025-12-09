@@ -25,19 +25,21 @@ Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* worl
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
     sprite.setScale({ 0.05f, 0.05f });
-
+    
     b2BodyDef bodyDef;
-    bodyDef.type = b2_kinematicBody;
-    bodyDef.position.Set(startPosition.x, startPosition.y);
-    bodyDef.linearVelocity.Set(initialVelocity.x, initialVelocity.y);
+    bodyDef.type = b2_dynamicBody; // Changed to dynamic so it can collide with kinematic bodies
+    bodyDef.position.Set(startPosition.x / SCALE, startPosition.y / SCALE);
+    bodyDef.linearVelocity.Set(initialVelocity.x / SCALE, initialVelocity.y / SCALE);
+    bodyDef.gravityScale = 0.0f; // Disable gravity
     body = world->CreateBody(&bodyDef);
 
     b2CircleShape circleShape;
-    circleShape.m_radius = prototypeRef.radius;
+    circleShape.m_radius = prototypeRef.radius / SCALE;
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circleShape;
     fixtureDef.isSensor = true;
+    fixtureDef.density = 1.0f; // Required for dynamic bodies
     body->CreateFixture(&fixtureDef);
     body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 
@@ -55,7 +57,7 @@ void Collectible::update(float deltaTime) {
     if (!isActive || !body) return;
 
     b2Vec2 bodyPos = body->GetPosition();
-    position = sf::Vector2f(bodyPos.x, bodyPos.y);
+    position = sf::Vector2f(bodyPos.x * SCALE, bodyPos.y * SCALE);
     sprite.setPosition(position);
 
     // if (position.y > 1200.f) {
@@ -98,6 +100,6 @@ void Collectible::setPosition(sf::Vector2f pos) {
     position = pos;
     sprite.setPosition(position);
     if (body) {
-        body->SetTransform(b2Vec2(position.x, position.y), 0.f);
+        body->SetTransform(b2Vec2(position.x / SCALE, position.y / SCALE), 0.f);
     }
 }
