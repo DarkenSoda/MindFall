@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include "BossProjectile.h"
+#include "BossLaser.h"
 #include "BossAnimation.h"
 
 class Boss {
@@ -37,8 +38,11 @@ private:
     float attackTimer;
     float attackInterval;
     std::vector<std::unique_ptr<BossProjectile>> projectiles;
+    BossLaser laser;
     float windowWidth;
     float windowHeight;
+
+    std::vector<sf::Texture> attackTextures;
 
     const float SCALE = 30.f;
     
@@ -46,6 +50,7 @@ private:
     void updateAttacks(float deltaTime);
     void performAttack();
     void projectileAttack();
+    void laserAttack();
 
 public:
     Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, float windowWidth, float windowHeight);

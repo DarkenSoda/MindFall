@@ -10,9 +10,8 @@ private:
     sf::Vector2f position;
     sf::Vector2f velocity;
     float radius;
-    
+
     sf::CircleShape circle;
-    sf::Texture texture;
     
     float windowWidth;
     float windowHeight;
@@ -25,8 +24,8 @@ public:
     BossProjectile(b2World* world, sf::Vector2f startPosition, sf::Vector2f startVelocity, 
                    float radius, float windowWidth, float windowHeight);
     ~BossProjectile();
-    
-    bool loadTexture(const std::string& texturePath);
+
+    void setTexture(const sf::Texture& texture);
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
     

@@ -34,9 +34,6 @@ BossProjectile::BossProjectile(b2World* world, sf::Vector2f startPosition, sf::V
 
     circle.setRadius(radius);
     circle.setOrigin({ radius, radius });
-    circle.setFillColor(sf::Color::Red);
-    circle.setOutlineColor(sf::Color::Yellow);
-    circle.setOutlineThickness(2.f);
 }
 
 BossProjectile::~BossProjectile() {
@@ -46,14 +43,8 @@ BossProjectile::~BossProjectile() {
     }
 }
 
-bool BossProjectile::loadTexture(const std::string& texturePath) {
-    if (!texture.loadFromFile(texturePath)) {
-        std::cerr << "Failed to load projectile texture: " << texturePath << std::endl;
-        return false;
-    }
-
+void BossProjectile::setTexture(const sf::Texture& texture) {
     circle.setTexture(&texture);
-    return true;
 }
 
 void BossProjectile::update(float deltaTime) {

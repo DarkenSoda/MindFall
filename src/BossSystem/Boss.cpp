@@ -22,7 +22,12 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , attackTimer(0.f)
     , attackInterval(3.0f)
     , windowWidth(windowWidth)
-    , windowHeight(windowHeight) {
+    , windowHeight(windowHeight)
+    , laser(world, 110.f, 1080.f, windowWidth, windowHeight) {
+
+    laser.setExpandDuration(0.3f);
+    laser.setActiveDuration(2.0f);
+    laser.setShrinkDuration(0.3f);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_kinematicBody;
@@ -41,7 +46,16 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
 
     body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 
-    // Initial sprite setup
+    sf::Texture projectileTex;
+    if (!projectileTex.loadFromFile("assets/boss_projectile.png")) {
+        std::cerr << "Failed to load boss projectile texture." << std::endl;
+    }
+    projectileTex.setSmooth(true);
+    if (!projectileTex.generateMipmap()) {
+        std::cerr << "Failed to generate mipmaps for boss projectile texture." << std::endl;
+    }
+
+    attackTextures.push_back(projectileTex);
 }
 
 Boss::~Boss() {
@@ -120,6 +134,9 @@ void Boss::update(float deltaTime) {
     updateAnimation(deltaTime);
     updateAttacks(deltaTime);
     
+    laser.updatePosition(position);
+    laser.update(deltaTime);
+    
     for (auto& projectile : projectiles) {
         if (projectile && projectile->isActive()) {
             projectile->update(deltaTime);
@@ -182,8 +199,7 @@ void Boss::performAttack() {
     if (choice <= 80) {
         projectileAttack();
     } else {
-        // Laser attack (to be implemented)
-        // laserAttack();
+        laserAttack();
     }
 }
 
@@ -218,12 +234,22 @@ void Boss::projectileAttack() {
         auto projectile = std::make_unique<BossProjectile>(
             world, spawnPos, velocity, 20.f, windowWidth, windowHeight
         );
-        
+
+        projectile->setTexture(attackTextures[0]);
+
         projectiles.push_back(std::move(projectile));
     }
 }
 
+void Boss::laserAttack() {
+    if (!laser.isActive()) {
+        laser.activate(position);
+    }
+}
+
 void Boss::render(sf::RenderWindow& window) {
+    laser.render(window);
+    
     for (auto& projectile : projectiles) {
         if (projectile && projectile->isActive()) {
             projectile->render(window);
