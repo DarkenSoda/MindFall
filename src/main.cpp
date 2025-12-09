@@ -20,23 +20,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
-    // folder, prefix, extension, count, fps, loop
-
-    
-
-    sf::Texture bgMain, bgGameOver;
-    sf::Texture btnStart, btnQuit, btnRetry;
-    
-    if (!bgMain.loadFromFile("../../../Assets/images.jpeg")) return -1;
-    if (!bgGameOver.loadFromFile("../../../Assets/images.jpeg")) return -1;
-
-    if (!btnStart.loadFromFile("../../../Assets/start.jpg")) return -1;
-    if (!btnQuit.loadFromFile("../../../Assets/exit.png")) return -1;
-    if (!btnRetry.loadFromFile("../../../Assets/tryAgain.jpeg")) return -1;
-
-
-    Menu mainMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgMain, btnStart, btnQuit);
-    Menu gameOverMenu(WINDOW_WIDTH, WINDOW_HEIGHT, bgGameOver, btnRetry, btnQuit);
+    Menu mainMenu(WINDOW_WIDTH, WINDOW_HEIGHT);
+    Menu gameOverMenu(WINDOW_WIDTH, WINDOW_HEIGHT, true);
     State currentState = State::MAIN_MENU;
 
 
@@ -47,12 +32,9 @@ int main() {
     world.SetContactListener(&collisionHandler);
 
 
-      Map gameMap;
+    Map gameMap;
     
-    gameMap.init(world, nullptr);
-    // gameMap.addLayer("../../../Assets/background_2.png", 20.f);
-    // gameMap.addLayer("../../../Assets/background_3.png", 40.f);
-    // gameMap.addLayer("../../../Assets/background_4.png", 80.f);
+    gameMap.init(world);
 
 
     while (window.isOpen()) {
@@ -67,6 +49,9 @@ int main() {
                     window.close();
                 if (keyEvent->code == sf::Keyboard::Key::K && currentState == State::PLAYING) {
                         gameMap.playVideo();
+                }
+                if (keyEvent->code == sf::Keyboard::Key::P && currentState == State::PLAYING) {
+                    currentState = State::GAME_OVER;
                 }
 
 
@@ -96,7 +81,6 @@ int main() {
                 gameView.setViewport(sf::FloatRect({ posX, posY }, { sizeX, sizeY }));
             }
         }
- 
 
         if(currentState == State::MAIN_MENU){
             int action = mainMenu.handleInput(window);
@@ -117,9 +101,6 @@ int main() {
                 window.close();
             }
         }
-        
-
-
 
         window.clear();
         if(currentState == State::MAIN_MENU){
@@ -129,14 +110,10 @@ int main() {
             gameMap.update(Utils::Time::fixedDeltaTime);
             gameMap.draw(window);
 
-            
-
         }
         else if (currentState == State::GAME_OVER){
             gameOverMenu.draw(window);
         }
-        
-
         window.display();
     }
 }

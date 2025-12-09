@@ -5,24 +5,31 @@
 static const float PPM = 30.0f;
 
 
-void Map::init(b2World& world, const sf::Texture* groundTexture) {
-    m_groundTexturePtr = groundTexture;
+void Map::init(b2World& world) {
+   
+
+    if (!m_groundTexture.loadFromFile("assets/ground.jpeg")) 
+        std::cerr << "Map Error: Failed to load assets/ground.png" << std::endl;
+    else
+        m_groundShape.setFillColor(sf::Color(100, 250, 50)); 
+
+    
 
     // --- GROUND SETUP (Bottom 15% of 1080p) ---
     float w = 2000.f; 
-    float h = 1080.f * 0.15f; 
+    float h = 1080.f * 0.10f; 
     float x = 1920.f / 2.f; 
     float y = 1080.f - (h / 2.f); 
 
-    m_videoBackground = std::make_unique<VideoBackground>("../../../Assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
+    m_videoBackground = std::make_unique<VideoBackground>("assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
 
     // Setup Visuals
     m_groundShape.setSize({w, h});
     m_groundShape.setOrigin({w / 2.f, h / 2.f});
     m_groundShape.setPosition({x, y});
 
-    if (m_groundTexturePtr != nullptr && m_groundTexturePtr->getSize().x > 0) {
-        m_groundShape.setTexture(m_groundTexturePtr);
+    if (m_groundTexture.getSize().x > 0 ) {
+        m_groundShape.setTexture(&m_groundTexture);
         m_groundShape.setTextureRect(sf::IntRect({0, 0}, {(int)w, (int)h})); // SFML 3 Syntax
         m_groundShape.setFillColor(sf::Color::White);
     } else {
