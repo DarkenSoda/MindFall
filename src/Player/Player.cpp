@@ -5,9 +5,9 @@ using namespace std;
 void Player::animations()
 {
     animator
-        .SetAnimation("idle", std::make_unique<Animation>("assets/player/idle.png", 0.125f, 8))
-        .SetAnimation("left", std::make_unique<Animation>("assets/player/walk_left.png", 0.125f, 8))
-        .SetAnimation("right", std::make_unique<Animation>("assets/player/walk_right.png", 0.125f, 8));
+        .SetAnimation("idle", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
+        .SetAnimation("left", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
+        .SetAnimation("right", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1));
 }
 
 Player::Player(sf::Vector2f position, float moveSpeed)
@@ -22,6 +22,12 @@ Player::Player(sf::Vector2f position, float moveSpeed)
     minimumRage = 0.0f;
     timeToEmptyRage = 5.0f;
     rageDownCooldown = 1.0f;
+    playerParts = new PlayerParts(position);
+}
+
+Player::~Player()
+{
+    delete playerParts;
 }
 
 void Player::move(PlayerCommand cmd, float deltaTime)
@@ -31,16 +37,20 @@ void Player::move(PlayerCommand cmd, float deltaTime)
     {
     case PlayerCommand::moveLeft:
         position.x -= moveSpeed * deltaTime;
+        playerParts->updateParts(position);
         s = "left";
         break;
 
     case PlayerCommand::moveRight:
+
         position.x += moveSpeed * deltaTime;
+        playerParts->updateParts(position);
         s = "right";
         break;
 
     default:
         s = "idle";
+        playerParts->updateParts(position);
         break;
     }
     animator.PlayAnimation(s, deltaTime, position);
@@ -66,9 +76,11 @@ sf::FloatRect Player::getGlobalBound()
     return animator.CurrentAnimaton().getGlobalBounds();
 }
 
-sf::Sprite& Player::CurrentAnimaton()
+void Player::drawPlayer(sf::RenderWindow& window)
 {
-    return animator.CurrentAnimaton();
+    playerParts->drawBehindParts(window);
+    window.draw(animator.CurrentAnimaton());
+    playerParts->drawFrontParts(window);
 }
 
 void Player::update(float deltatime)

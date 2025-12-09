@@ -111,20 +111,7 @@ int main() {
         }
 
         window.clear();
-        if(currentState == State::MAIN_MENU){
-            mainMenu.draw(window);
-        }
-        else if (currentState == State::PLAYING){
-            gameMap.update(Utils::Time::fixedDeltaTime);
-            gameMap.draw(window);
-
-        }
-        else if (currentState == State::GAME_OVER){
-            gameOverMenu.draw(window);
-        }
-        gameManager.gameManagerUpdate();
-
-        window.draw(player.CurrentAnimaton());
+        player.drawPlayer(window);
         window.setView(gameView);
         window.display();
     }

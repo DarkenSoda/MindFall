@@ -28,7 +28,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} "src/Player/PlayerParts.cpp" "src/Player/PlayerParts.h")
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC SFML::Graphics
