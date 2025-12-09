@@ -26,7 +26,8 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
 
-    
+    WorldSpawner spawner(&world);
+
     InputHandler inputHandler; 
     Player player({ 200.f, 800.f }, 200.f);
 
@@ -37,10 +38,12 @@ int main() {
 
         gameManager.handleEvents();
 
+        spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
         window.clear();
         window.setView(gameView);
         gameManager.gameManagerUpdate();
         gameManager.gameManagerRender();
+        spawner.draw(window);
         window.display();
     }
 

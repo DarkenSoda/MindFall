@@ -31,4 +31,5 @@ public:
     std::vector<std::unique_ptr<Collectible>>& getCollectibles() { return collectibles; }
 
     void removeInactiveCollectibles();
+    void switchAllCollectible();
 };

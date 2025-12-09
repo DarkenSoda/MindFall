@@ -11,7 +11,7 @@ WorldSpawner::WorldSpawner(b2World* world)
     sf::Texture texture1;
     sf::Texture texture2;
 
-    if(!texture1.loadFromFile("assets/prop1.png") || !texture2.loadFromFile("assets/prop2.png")) {
+    if(!texture1.loadFromFile("assets/green_smile.png") || !texture2.loadFromFile("assets/red_smile.png")) {
         std::cerr << "Error loading collectible textures!" << std::endl;
     }
 
@@ -21,23 +21,36 @@ WorldSpawner::WorldSpawner(b2World* world)
     if(!texture1.generateMipmap() || !texture2.generateMipmap()) {
         std::cerr << "Error generating mipmaps for collectible textures!" << std::endl;
     }
+    sf::Texture texture3;
+    sf::Texture texture4;
 
-    collectiblePrototypes = {
-        {
-            texture1,
-            texture2,
-            CollectibleType::Score,
-            70.f,
-            28.f
-        },
-        {
-            texture1,
-            texture2,
-            CollectibleType::Damage,
-            30.f,
-            28.f
-        }
-    };
+    if(!texture3.loadFromFile("assets/green_sad.png") || !texture4.loadFromFile("assets/red_sad.png")) {
+        std::cerr << "Error loading collectible textures!" << std::endl;
+    }
+
+    texture1.setSmooth(true);
+    texture2.setSmooth(true);
+
+    if(!texture3.generateMipmap() || !texture4.generateMipmap()) {
+        std::cerr << "Error generating mipmaps for collectible textures!" << std::endl;
+    }
+
+    CollectiblePrototype scorePrototype;
+    scorePrototype.texture1 = texture1;
+    scorePrototype.texture2 = texture2;
+    scorePrototype.type = CollectibleType::Score;
+    scorePrototype.spawnPercentage = 70.f;
+    scorePrototype.radius = 28.f;
+
+    CollectiblePrototype damagePrototype;
+    damagePrototype.texture1 = texture3;
+    damagePrototype.texture2 = texture4;
+    damagePrototype.type = CollectibleType::Damage;
+    damagePrototype.spawnPercentage = 30.f;
+    damagePrototype.radius = 28.f;
+
+    collectiblePrototypes.push_back(scorePrototype);
+    collectiblePrototypes.push_back(damagePrototype);
 }
 
 void WorldSpawner::update(float deltaTime, float screenWidth) {
@@ -56,9 +69,9 @@ void WorldSpawner::update(float deltaTime, float screenWidth) {
             sf::Vector2f downwardVelocity(0.f, 200.f);
 
             // Create new collectible using prototype reference
+            // The type will be handled by the collectible based on spawnTypeReversed
             auto newCollectible = std::make_unique<Collectible>(
-                *prototypeToSpawn, world, spawnPosition, downwardVelocity,
-                spawnTypeReversed ? CollectibleType::Damage : CollectibleType::Score
+                *prototypeToSpawn, world, spawnPosition, downwardVelocity, spawnTypeReversed
             );
             
             collectibles.push_back(std::move(newCollectible));
@@ -115,4 +128,12 @@ void WorldSpawner::removeInactiveCollectibles() {
         std::remove_if(collectibles.begin(), collectibles.end(), isCollectibleInactive),
         collectibles.end()
     );
+}
+
+void WorldSpawner::switchAllCollectible() {
+    spawnTypeReversed = !spawnTypeReversed;
+    
+    for (auto& collectible : collectibles) {
+        collectible->switchTexture();
+    }
 }

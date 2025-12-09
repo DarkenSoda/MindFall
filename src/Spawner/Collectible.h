@@ -25,7 +25,7 @@ private:
 
 public:
     Collectible(const CollectiblePrototype& prototypeRef, b2World* world, 
-                sf::Vector2f startPosition, sf::Vector2f initialVelocity, CollectibleType type);
+                sf::Vector2f startPosition, sf::Vector2f initialVelocity, bool isReversed);
 
     ~Collectible();
 

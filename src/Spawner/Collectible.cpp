@@ -2,18 +2,27 @@
 
 
 Collectible::Collectible(const CollectiblePrototype& prototypeRef, b2World* world,
-    sf::Vector2f startPosition, sf::Vector2f initialVelocity, CollectibleType type)
-    : type(type)
-    , spawnPercentage(prototypeRef.spawnPercentage)
+    sf::Vector2f startPosition, sf::Vector2f initialVelocity, bool isReversed)
+    : spawnPercentage(prototypeRef.spawnPercentage)
     , radius(prototypeRef.radius)
     , body(nullptr)
     , world(world)
     , position(startPosition)
     , isActive(true)
-    , usingFirstTexture(type == CollectibleType::Score)
     , prototype(&prototypeRef)
-    , sprite(prototypeRef.type == CollectibleType::Score ? prototypeRef.texture1 : prototypeRef.texture2)
+    , sprite(prototypeRef.texture1)
 {
+    // Determine the actual type based on prototype and reversed state
+    if (prototypeRef.type == CollectibleType::Score) {
+        type = isReversed ? CollectibleType::Damage : CollectibleType::Score;
+        usingFirstTexture = !isReversed;
+        sprite.setTexture(isReversed ? prototypeRef.texture2 : prototypeRef.texture1);
+    } else {
+        type = isReversed ? CollectibleType::Score : CollectibleType::Damage;
+        usingFirstTexture = isReversed;
+        sprite.setTexture(isReversed ? prototypeRef.texture1 : prototypeRef.texture2);
+    }
+
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
     sprite.setScale({ 0.05f, 0.05f });
@@ -73,6 +82,7 @@ void Collectible::draw(sf::RenderWindow& window) {
 void Collectible::switchTexture() {
     if (!prototype) return;
     
+    // Switch texture
     if (usingFirstTexture) {
         sprite.setTexture(prototype->texture2);
     }
@@ -80,6 +90,9 @@ void Collectible::switchTexture() {
         sprite.setTexture(prototype->texture1);
     }
     usingFirstTexture = !usingFirstTexture;
+    
+    // Switch type
+    type = (type == CollectibleType::Score) ? CollectibleType::Damage : CollectibleType::Score;
 }
 
 void Collectible::setPosition(sf::Vector2f pos) {
