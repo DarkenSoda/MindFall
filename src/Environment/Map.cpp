@@ -2,12 +2,7 @@
 #include "../EntityTypes.h"
 #include <iostream>
 
-static const float PPM = 30.0f;
-
-
 void Map::init(b2World& world) {
-   
-
     if (!m_groundTexture.loadFromFile("assets/FINAL_FLOOR.png")) {
         std::cerr << "Map Error: Failed to load assets/FINAL_FLOOR.png" << std::endl;
         m_groundShape.setFillColor(sf::Color(100, 250, 50));
@@ -20,6 +15,10 @@ void Map::init(b2World& world) {
     float h = 1080.f * 0.23f; 
     float x = 1920.f / 2.f; 
     float y = 1080.f - (h / 2.f); 
+    
+    // Collider dimensions (scaled down vertically)
+    float colliderHeight = h * 0.6f; // 60% of visual height
+    float colliderY = y + (h / 2.f) - (colliderHeight / 2.f); // Position at bottom of visual
 
     m_videoBackground = std::make_unique<VideoBackground>("assets/Background_frames", "b", ".png", 9, 10.f, true);
 
@@ -40,12 +39,12 @@ void Map::init(b2World& world) {
     // Setup Physics
     b2BodyDef bodyDef;
     bodyDef.type = b2_staticBody; 
-    bodyDef.position.Set(x / PPM, y / PPM); 
+    bodyDef.position.Set(x / SCALE, colliderY / SCALE); 
 
     m_groundBody = world.CreateBody(&bodyDef);
 
     b2PolygonShape boxShape;
-    boxShape.SetAsBox((w / 2.f) / PPM, (h / 2.f) / PPM); 
+    boxShape.SetAsBox((w / 2.f) / SCALE, (colliderHeight / 2.f) / SCALE); 
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &boxShape;
@@ -53,6 +52,10 @@ void Map::init(b2World& world) {
     fixtureDef.userData.pointer = static_cast<uintptr_t>(EntityType::GROUND);
 
     m_groundBody->CreateFixture(&fixtureDef);
+    
+    // Store collider data for debug draw
+    m_colliderSize = {w, colliderHeight};
+    m_colliderPosition = {x, colliderY};
 }
 
 
@@ -94,4 +97,14 @@ void Map::draw(sf::RenderWindow& window) {
     }
 
     window.draw(m_groundShape);
+
+    // debug draw ground collider wireframe
+    sf::RectangleShape debugRect;
+    debugRect.setSize(m_colliderSize);
+    debugRect.setOrigin({m_colliderSize.x / 2.f, m_colliderSize.y / 2.f});
+    debugRect.setPosition(m_colliderPosition);
+    debugRect.setFillColor(sf::Color::Transparent);
+    debugRect.setOutlineColor(sf::Color::Red);
+    debugRect.setOutlineThickness(2.f);
+    window.draw(debugRect);
 }

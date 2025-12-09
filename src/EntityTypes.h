@@ -5,5 +5,5 @@ enum class EntityType {
     COLLECTIBLE,
     BOSS,
     BULLET,
-    LASER,
+    DAMAGE,
 };

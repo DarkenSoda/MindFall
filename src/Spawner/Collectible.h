@@ -8,6 +8,8 @@
 
 class Collectible {
 private:
+    const float SCALE = 30.f;
+    
     sf::Sprite sprite;
     const CollectiblePrototype* prototype;
 
