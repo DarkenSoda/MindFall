@@ -27,38 +27,17 @@ int main() {
     InputHandler inputHandler; 
     Player player({ 200.f, 800.f }, 200.f);
 
-    // Create Game Manager
     GameManager gameManager(&window, &inputHandler, &player, &gameView, &world);
 
-
-    sf::Texture bulletTex;
-    if (!bulletTex.loadFromFile("assets/player/bullet.png")) {
-        std::cout << "Error loading bullet.png" << std::endl;
-        // In a real game, ha`ndle error. For now, we continue or exit.
-        return -1;
-    }
-
-    std::vector<Bullet> bullets; // This stores all active bullets
-    sf::Clock shootTimer;
-    sf::Time shootCooldown = sf::seconds(1.25f);
-
     while (window.isOpen()) {
-        
-        // Update Delta Time
         Utils::Time::Update();
 
-        // 1. Handle Events (Inputs, Resize, Window Close)
         gameManager.handleEvents();
 
-        gameManager.gameManagerUpdate();
-
-        // 3. Render
         window.clear();
-        for (auto& bullet : bullets) {
-            bullet.render(window);
-        }
-        player.drawPlayer(window);
         window.setView(gameView);
+        gameManager.gameManagerUpdate();
+        gameManager.gameManagerRender();
         window.display();
     }
 
