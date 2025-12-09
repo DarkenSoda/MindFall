@@ -7,6 +7,7 @@
 #include "Player/Player.h"
 #include "World/EventHandler.h"
 #include "Player/Bullet.h"
+#include "UI/RageBar.h"
 #include <cmath>
 
 // Constants

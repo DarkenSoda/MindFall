@@ -23,8 +23,6 @@ void EventHandler::handleEvent(float dt)
         std::uniform_int_distribution<int> distribution(1, 3);
         int r = distribution(generator);
 
-        cout << "Random number: " << r << endl;
-
         switch (r)
         {
         case 1:

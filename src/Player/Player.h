@@ -46,4 +46,6 @@ public:
     int getLives() const;
 
     void takeDamage(int damage = 1);
+
+    float getRageInterval() const;
 };

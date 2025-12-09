@@ -17,7 +17,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 1, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	gameMap.init(*world);
 
 	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
@@ -30,6 +30,12 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 		throw std::runtime_error("Failed to load bullet texture from assets/player/bullet.png");
 	}
 
+	if (!rageBarTexture.loadFromFile("assets/player/FINAL_LEVEL_UP.png")) {
+		throw std::runtime_error("Failed to load bullet texture from assets/player/FINAL_LEVEL_UP.png");
+	}
+
+	rageBar = new RageBar(rageBarTexture , 5);
+
 	this->eventHandler->setSpawner(&spawner);
 }
 
@@ -39,6 +45,7 @@ GameManager::~GameManager()
 	if (healthBar != nullptr) {
 		delete healthBar;
 	}
+	delete rageBar;
 }
 
 void GameManager::handleEvents()
@@ -138,13 +145,12 @@ void GameManager::gameManagerUpdate()
 			int currentHealth = player->getLives();
 			healthBar->setHealth(currentHealth);
 		}
-
+		rageBar->setRage(player->getRage());
 		// Update all bullets
 		for (auto& bullet : bullets) {
 			bullet.update();
 		}
 
-		// Remove bullets that are off-screen
 		bullets.erase(
 			std::remove_if(bullets.begin(), bullets.end(),
 				[](const Bullet& bullet) {
@@ -167,37 +173,38 @@ void GameManager::gameManagerUpdate()
 
 void GameManager::gameManagerRender()
 {
-	if (currentState == State::MAIN_MENU)
-	{
-		window->setView(window->getDefaultView());
-		startMenu.draw(*window);
-	}
-	else if (currentState == State::PLAYING)
-	{
-		// Draw game world with game view
-		window->setView(*gameView);
-		gameMap.draw(*window);
-		spawner.draw(*window);
-		boss.render(*window);
-		player->drawPlayer(*window);
+    if (currentState == State::MAIN_MENU)
+    {
+        window->setView(window->getDefaultView());
+        startMenu.draw(*window);
+    }
+    else if (currentState == State::PLAYING)
+    {
+        // Draw game world with game view
+        window->setView(*gameView);
+        gameMap.draw(*window);
+        spawner.draw(*window);
+        boss.render(*window);
+        player->drawPlayer(*window);
 
-		// Draw bullets with game view
-		for (auto& bullet : bullets) {
-			bullet.render(*window);
-		}
+        // Draw bullets with game view
+        for (auto& bullet : bullets) {
+            bullet.render(*window);
+        }
 
-		// Switch to default view for UI layer
-		window->setView(window->getDefaultView());
-		
-		// Draw HealthBar on top
-		if (healthBar != nullptr)
-		{
-			healthBar->render(*window);
-		}
-	}
-	else if (currentState == State::BEGINING_SCENE)
-	{
-		window->setView(window->getDefaultView());
-		videoBg->draw(*window);
-	}
+        window->setView(window->getDefaultView());
+
+        if (healthBar != nullptr) {
+            healthBar->render(*window);
+        }
+
+        if (rageBar != nullptr) {
+            rageBar->render(*window);
+        }
+    }
+    else if (currentState == State::BEGINING_SCENE)
+    {
+        window->setView(window->getDefaultView());
+        videoBg->draw(*window);
+    }
 }

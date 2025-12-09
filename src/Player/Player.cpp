@@ -68,6 +68,11 @@ float Player::getRage()
     return rage;
 }
 
+float Player::getRageInterval() const {
+    // Map rage to the nearest multiple of 20
+    return std::clamp(static_cast<int>(rage / 20) * 20, 0, 100);
+}
+
 int Player::getLives() const
 {
     return lives;

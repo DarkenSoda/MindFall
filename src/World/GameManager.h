@@ -11,6 +11,7 @@
 #include "../Environment/Map.h"
 #include "../Spawner/WorldSpawner.h"
 #include "../BossSystem/Boss.h"
+#include "../UI/RageBar.h"
 
 class GameManager {
 public:
@@ -50,6 +51,9 @@ private:
 
 	Boss boss;
 	WorldSpawner spawner;
+
+    RageBar* rageBar;
+    sf::Texture rageBarTexture;
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);

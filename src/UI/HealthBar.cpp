@@ -5,16 +5,19 @@
 HealthBar::HealthBar(const sf::Texture& textureRef, int maxHealth)
     : texture(textureRef), sprite(texture), maxHP(maxHealth)
 {
+    texture.setSmooth(true);
+    texture.generateMipmap();
+
     sf::Vector2u textureSize = texture.getSize();
 
     frameWidth = textureSize.x / maxHealth;
     frameHeight = textureSize.y;
 
     float centerX = 100.0f;
-    float bottomY = 1080.f - frameHeight;
+    float bottomY = 1080.f - frameHeight+20.0f;
     sprite.setPosition(sf::Vector2f(centerX, bottomY));
     
-    sprite.setScale(sf::Vector2f(0.8f, 0.8f));
+    sprite.setScale(sf::Vector2f(0.6f, 0.6f));
 
     setHealth(maxHP);
     
