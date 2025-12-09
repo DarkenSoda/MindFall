@@ -35,6 +35,13 @@ private:
     sf::Vector2f pupilOffset;    
     sf::Vector2f playerPosition;
     
+    float moveSpeed;
+    float movementDirection;
+    float leftBound;
+    float rightBound;
+
+    const float SCALE = 30.f;
+
 public:
     Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize);
     ~Boss();
@@ -42,6 +49,8 @@ public:
     void addLayer(const std::string& texturePath, sf::Vector2f offset = sf::Vector2f(0.f, 0.f), bool isAnimated = false);
     void setPupilLayer(int layerIndex, float circleRadius = 10.f);
     void setPlayerPosition(sf::Vector2f playerPos);
+    void setBounds(float left, float right);
+    void setMoveSpeed(float speed);
     
     void update(float deltaTime);
     void render(sf::RenderWindow& window);

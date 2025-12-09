@@ -12,16 +12,22 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize)
     , pupilAngle(0.f)
     , pupilOffset(0.f, 0.f)
     , playerPosition(0.f, 0.f)
-{
+    , moveSpeed(400.f)
+    , movementDirection(1.0f)
+    , leftBound(0.f)
+    , rightBound(1920.f) {
+
     b2BodyDef bodyDef;
     bodyDef.type = b2_kinematicBody;
-    bodyDef.position.Set(startPosition.x, startPosition.y);
-    body = world->CreateBody(&bodyDef);
+    bodyDef.position.Set(startPosition.x / SCALE, startPosition.y / SCALE);
 
+    body = world->CreateBody(&bodyDef);
+    
     b2PolygonShape boxShape;
-    boxShape.SetAsBox(bossSize.x / 2.f, bossSize.y / 2.f);
+    boxShape.SetAsBox((bossSize.x / 2.f) / SCALE, (bossSize.y / 2.f) / SCALE);
 
     b2FixtureDef fixtureDef;
+    fixtureDef.friction = 0.0f;
     fixtureDef.shape = &boxShape;
     fixtureDef.isSensor = true;
     body->CreateFixture(&fixtureDef);
@@ -41,7 +47,7 @@ Boss::~Boss() {
 
 void Boss::addLayer(const std::string& texturePath, sf::Vector2f offset, bool isAnimated) {
     BossLayer layer;
-    
+
     if (!layer.texture.loadFromFile(texturePath)) {
         std::cerr << "Failed to load boss layer texture: " << texturePath << std::endl;
         return;
@@ -69,21 +75,43 @@ void Boss::setPlayerPosition(sf::Vector2f playerPos) {
     playerPosition = playerPos;
 }
 
+void Boss::setBounds(float left, float right) {
+    leftBound = left;
+    rightBound = right;
+}
+
+void Boss::setMoveSpeed(float speed) {
+    moveSpeed = speed;
+}
+
 void Boss::update(float deltaTime) {
     b2Vec2 bodyPos = body->GetPosition();
-    position = sf::Vector2f(bodyPos.x, bodyPos.y);
+    sf::Vector2f newPosition = sf::Vector2f(bodyPos.x * SCALE, bodyPos.y * SCALE);
+
+    position = newPosition;
+
+    float buffer = 5.f;
+    if (position.x <= leftBound + size.x / 2.f + buffer && movementDirection < 0.f) {
+        movementDirection = 1.0f;
+    }
+    else if (position.x >= rightBound - size.x / 2.f - buffer && movementDirection > 0.f) {
+        movementDirection = -1.0f;
+    }
+
+    body->SetLinearVelocity(b2Vec2((moveSpeed / SCALE) * movementDirection, 0.f));
 
     if (pupilLayerIndex >= 0 && pupilLayerIndex < static_cast<int>(layers.size())) {
         sf::Vector2f directionToPlayer = playerPosition - position;
-        float distance = std::sqrt(directionToPlayer.x * directionToPlayer.x + 
-                                   directionToPlayer.y * directionToPlayer.y);
+        float distance = std::sqrt(directionToPlayer.x * directionToPlayer.x +
+            directionToPlayer.y * directionToPlayer.y);
 
         if (distance > 0.f) {
             directionToPlayer.x /= distance;
             directionToPlayer.y /= distance;
 
             pupilOffset = directionToPlayer * pupilCircleRadius;
-        } else {
+        }
+        else {
             pupilOffset = sf::Vector2f(0.f, 0.f);
         }
     }
