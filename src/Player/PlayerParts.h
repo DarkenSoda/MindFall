@@ -8,8 +8,8 @@ using namespace sf;
 
 class PlayerParts
 {
-	string path[3];
-	Texture texture[3];
+	string path[5];
+	Texture texture[5];
 	vector<Sprite> sprite;
 	int length;
 	float rotationSpeed = 10.0f;
@@ -21,5 +21,6 @@ public:
 	void updateParts(sf::Vector2f position);
 	void drawBehindParts(RenderWindow& window);
 	void drawFrontParts(RenderWindow& window);
+	void rotateWheels();
 };
 
