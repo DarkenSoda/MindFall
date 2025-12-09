@@ -3,6 +3,7 @@
 #include "Time.h"
 #include "CollisionSystem/CollisionHandler.h"
 #include <cmath>
+#include "BossSystem/Boss.h"
 
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
@@ -17,6 +18,8 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
 
+    Boss boss(&world, sf::Vector2f(WINDOW_WIDTH / 2.f, 100.f), sf::Vector2f(200.f, 200.f), WINDOW_WIDTH, WINDOW_HEIGHT);
+ 
     while (window.isOpen()) {
         Utils::Time::Update();
 
@@ -54,10 +57,13 @@ int main() {
             }
         }
 
+        boss.update(Utils::Time::deltaTime);
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
         window.clear();
         window.setView(gameView);
+
+        boss.render(window);
 
         window.display();
     }

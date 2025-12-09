@@ -1,0 +1,242 @@
+#include "Boss.h"
+#include <cmath>
+#include <iostream>
+#include <random>
+
+Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, float windowWidth, float windowHeight)
+    : world(world)
+    , position(startPosition)
+    , size(bossSize)
+    , body(nullptr)
+    , sprite(spriteSheet)
+    , currentAnimation("")
+    , currentFrame(0)
+    , animationTimer(0.f)
+    , frameWidth(0)
+    , frameHeight(0)
+    , playerPosition(0.f, 0.f)
+    , moveSpeed(400.f)
+    , movementDirection(1.0f)
+    , leftBound(0.f)
+    , rightBound(1920.f)
+    , attackTimer(0.f)
+    , attackInterval(3.0f)
+    , windowWidth(windowWidth)
+    , windowHeight(windowHeight) {
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_kinematicBody;
+    bodyDef.position.Set(startPosition.x / SCALE, startPosition.y / SCALE);
+
+    body = world->CreateBody(&bodyDef);
+    
+    b2PolygonShape boxShape;
+    boxShape.SetAsBox((bossSize.x / 2.f) / SCALE, (bossSize.y / 2.f) / SCALE);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.friction = 0.0f;
+    fixtureDef.shape = &boxShape;
+    fixtureDef.isSensor = true;
+    body->CreateFixture(&fixtureDef);
+
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+
+    // Initial sprite setup
+}
+
+Boss::~Boss() {
+    if (body && world) {
+        world->DestroyBody(body);
+        body = nullptr;
+    }
+}
+
+bool Boss::loadSpriteSheet(const std::string& texturePath, int frameWidth, int frameHeight) {
+    if (!spriteSheet.loadFromFile(texturePath)) {
+        std::cerr << "Failed to load boss sprite sheet: " << texturePath << std::endl;
+        return false;
+    }
+
+    this->frameWidth = frameWidth;
+    this->frameHeight = frameHeight;
+
+    sprite.setTexture(spriteSheet);
+    sprite.setTextureRect(sf::IntRect({0, 0}, {frameWidth, frameHeight}));
+    sprite.setOrigin({frameWidth / 2.f, frameHeight / 2.f});
+
+    return true;
+}
+
+void Boss::addAnimation(const std::string& name, int row, int frameCount, float switchTime, bool loop) {
+    animations[name] = BossAnimation(row, frameCount, switchTime, loop);
+}
+
+void Boss::playAnimation(const std::string& name) {
+    if (currentAnimation == name) return;
+    
+    if (animations.find(name) != animations.end()) {
+        currentAnimation = name;
+        currentFrame = 0;
+        animationTimer = 0.f;
+        
+        const BossAnimation& anim = animations[name];
+        sprite.setTextureRect(sf::IntRect({0, anim.row * frameHeight}, {frameWidth, frameHeight}));
+    }
+}
+
+void Boss::setPlayerPosition(sf::Vector2f playerPos) {
+    playerPosition = playerPos;
+}
+
+void Boss::setBounds(float left, float right) {
+    leftBound = left;
+    rightBound = right;
+}
+
+void Boss::setMoveSpeed(float speed) {
+    moveSpeed = speed;
+}
+
+void Boss::setAttackInterval(float interval) {
+    attackInterval = interval;
+}
+
+void Boss::update(float deltaTime) {
+    b2Vec2 bodyPos = body->GetPosition();
+    sf::Vector2f newPosition = sf::Vector2f(bodyPos.x * SCALE, bodyPos.y * SCALE);
+
+    position = newPosition;
+
+    float buffer = 5.f;
+    if (position.x <= leftBound + size.x / 2.f + buffer && movementDirection < 0.f) {
+        movementDirection = 1.0f;
+    }
+    else if (position.x >= rightBound - size.x / 2.f - buffer && movementDirection > 0.f) {
+        movementDirection = -1.0f;
+    }
+
+    body->SetLinearVelocity(b2Vec2((moveSpeed / SCALE) * movementDirection, 0.f));
+
+    updateAnimation(deltaTime);
+    updateAttacks(deltaTime);
+    
+    for (auto& projectile : projectiles) {
+        if (projectile && projectile->isActive()) {
+            projectile->update(deltaTime);
+        }
+    }
+    
+    projectiles.erase(
+        std::remove_if(projectiles.begin(), projectiles.end(),
+            [](const std::unique_ptr<BossProjectile>& p) { return !p || !p->isActive(); }),
+        projectiles.end());
+    
+    sprite.setPosition(position);
+}
+
+void Boss::updateAnimation(float deltaTime) {
+    if (currentAnimation.empty() || animations.find(currentAnimation) == animations.end()) {
+        return;
+    }
+
+    const BossAnimation& anim = animations[currentAnimation];
+    animationTimer += deltaTime;
+
+    if (animationTimer >= anim.switchTime) {
+        currentFrame++;
+        
+        if (currentFrame >= anim.frameCount) {
+            if (anim.loop) {
+                currentFrame = 0;
+            } else {
+                currentFrame = anim.frameCount - 1;
+                // switch to idle
+            }
+        }
+
+        sprite.setTextureRect(sf::IntRect(
+            {currentFrame * frameWidth, anim.row * frameHeight},
+            {frameWidth, frameHeight}
+        ));
+        
+        animationTimer = 0.f;
+    }
+}
+
+void Boss::updateAttacks(float deltaTime) {
+    attackTimer += deltaTime;
+    
+    if (attackTimer >= attackInterval) {
+        performAttack();
+        attackTimer = 0.f;
+    }
+}
+
+void Boss::performAttack() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(1, 100);
+    
+    int choice = dis(gen);
+    
+    if (choice <= 80) {
+        projectileAttack();
+    } else {
+        // Laser attack (to be implemented)
+        // laserAttack();
+    }
+}
+
+void Boss::projectileAttack() {
+    sf::Vector2f spawnPos = position;
+    
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> countDis(1, 2);
+    static std::uniform_int_distribution<> sideDis(0, 1);
+    
+    int bulletCount = countDis(gen);
+    float speed = 500.f;
+    
+    for (int i = 0; i < bulletCount; ++i) {
+        float angle;
+        if (sideDis(gen) == 0) {
+            static std::uniform_real_distribution<float> rightAngleDis(30.f, 60.f);
+            angle = rightAngleDis(gen);
+        } else {
+            static std::uniform_real_distribution<float> leftAngleDis(120.f, 150.f);
+            angle = leftAngleDis(gen);
+        }
+        
+        float angleRad = angle * 3.14159f / 180.f;
+        
+        sf::Vector2f velocity(
+            std::cos(angleRad) * speed,
+            std::sin(angleRad) * speed
+        );
+        
+        auto projectile = std::make_unique<BossProjectile>(
+            world, spawnPos, velocity, 20.f, windowWidth, windowHeight
+        );
+        
+        projectiles.push_back(std::move(projectile));
+    }
+}
+
+void Boss::render(sf::RenderWindow& window) {
+    for (auto& projectile : projectiles) {
+        if (projectile && projectile->isActive()) {
+            projectile->render(window);
+        }
+    }
+    
+    window.draw(sprite);
+
+    sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
+    debugBox.setOrigin({ size.x / 2.f, size.y / 2.f });
+    debugBox.setPosition(position);
+    debugBox.setFillColor(sf::Color::Transparent);
+    debugBox.setOutlineColor(sf::Color(0, 255, 0, 255));
+    debugBox.setOutlineThickness(2.f);
+    window.draw(debugBox);
+}
