@@ -1,27 +1,20 @@
 #include "Bullet.h"
-#include <cmath>
 
-Bullet::Bullet(const sf::Texture& texture, sf::Vector2f startPos, sf::Vector2f direction) {
-    sprite.setTexture(texture);
-    sprite.setPosition(startPos);
+Bullet::Bullet(const sf::Texture& texture, float startX, float startY)
+    : sprite(texture)
+{
+    speed = 15.f;
 
-    // Normalize direction
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (length != 0)
-        direction /= length;
-
-    velocity = direction * speed;
-
-    // Optional: rotate sprite to match direction
-    float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
-    sprite.setRotation(sf::degrees(angle));
+    sprite.setScale({ 0.05f, 0.05f });
+    sf::Vector2f size = sprite.getGlobalBounds().size;
+    sprite.setPosition({ startX - (size.x / 2.f), startY });
 }
 
-void Bullet::update(float deltaTime) {
-    sprite.move(velocity * deltaTime);
+void Bullet::update() {
+    sprite.move({ 0.f, -speed });
 }
 
-void Bullet::draw(sf::RenderWindow& window) {
+void Bullet::render(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 

@@ -5,6 +5,9 @@
 #include "CollisionSystem/CollisionHandler.h"
 #include "Player/InputHandler.h" 
 #include "Player/Player.h"
+#include "World/EventHandler.h"
+#include "World/GameManager.h"
+#include "Player/Bullet.h"
 
 // Constants
 const float WINDOW_WIDTH = 1920.f;
@@ -28,6 +31,18 @@ int main() {
     // Create Game Manager
     GameManager gameManager(&window, &inputHandler, &player, &gameView, &world);
 
+
+    sf::Texture bulletTex;
+    if (!bulletTex.loadFromFile("assets/player/bullet.png")) {
+        std::cout << "Error loading bullet.png" << std::endl;
+        // In a real game, handle error. For now, we continue or exit.
+        return -1;
+    }
+
+    std::vector<Bullet> bullets; // This stores all active bullets
+    sf::Clock shootTimer;
+    sf::Time shootCooldown = sf::seconds(1.25f);
+
     while (window.isOpen()) {
         
         // Update Delta Time
@@ -36,12 +51,13 @@ int main() {
         // 1. Handle Events (Inputs, Resize, Window Close)
         gameManager.handleEvents();
 
-        // 2. Update Game Logic (States, Physics, Menus)
+
         gameManager.gameManagerUpdate();
 
         // 3. Render
         window.clear();
-        gameManager.gameManagerRender();
+        player.drawPlayer(window);
+        window.setView(gameView);
         window.display();
     }
 

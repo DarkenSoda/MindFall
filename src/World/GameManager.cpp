@@ -100,7 +100,7 @@ void GameManager::gameManagerUpdate()
 
 		world->Step(Utils::Time::fixedDeltaTime, 8, 3);
 
-		eventHandler->handleEvent();
+		eventHandler->handleEvent(Utils::Time::deltaTime);
 		
 
 		player->move(inputHandler->getCommand(), Utils::Time::deltaTime);

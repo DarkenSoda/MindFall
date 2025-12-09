@@ -1,18 +1,16 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
 
 class Bullet {
-private:
-    sf::Sprite sprite;
-    sf::Vector2f velocity;
-    float speed = 500.f;
-
 public:
-    Bullet(const sf::Texture& texture, sf::Vector2f startPos, sf::Vector2f direction);
+    Bullet(const sf::Texture& texture, float startX, float startY);
 
-    void update(float deltaTime);
-    void draw(sf::RenderWindow& window);
+    void update();
+    void render(sf::RenderWindow& window);
 
     sf::FloatRect getBounds() const;
+
+private:
+    sf::Sprite sprite;
+    float speed;
 };
