@@ -6,18 +6,21 @@
 #include <cmath>
 #include "UI/menu.h"
 #include "Environment/Map.h"
-
+#include "Player/Player.h"
+#include "World/EventHandler.h"
+#include "World/GameManager.h"
 enum class State {
     MAIN_MENU,
     PLAYING,
     GAME_OVER
 };
 
+
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam"/*, sf::State::Fullscreen*/);
     window.setFramerateLimit(60);
 
     Menu mainMenu(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -30,6 +33,12 @@ int main() {
     b2World world(b2Vec2(0.f, 0.f));
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
+    
+    Player player( sf::Vector2f(200.0f,800.0f), 250.0f);
+
+    InputHandler input;
+
+    GameManager gameManager(&input, &player, &gameView , &world);
 
 
     Map gameMap;
@@ -77,7 +86,6 @@ int main() {
                     sizeY = windowRatio / viewRatio;
                     posY = (1.f - sizeY) / 2.f;
                 }
-
                 gameView.setViewport(sf::FloatRect({ posX, posY }, { sizeX, sizeY }));
             }
         }
@@ -114,6 +122,11 @@ int main() {
         else if (currentState == State::GAME_OVER){
             gameOverMenu.draw(window);
         }
+        gameManager.gameManagerUpdate();
+
+        window.draw(player.CurrentAnimaton());
+        window.setView(gameView);
         window.display();
     }
+    return 0;
 }
