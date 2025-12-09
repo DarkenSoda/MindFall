@@ -14,6 +14,8 @@ void Map::init(b2World& world, const sf::Texture* groundTexture) {
     float x = 1920.f / 2.f; 
     float y = 1080.f - (h / 2.f); 
 
+    m_videoBackground = std::make_unique<VideoBackground>("../../../Assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
+
     // Setup Visuals
     m_groundShape.setSize({w, h});
     m_groundShape.setOrigin({w / 2.f, h / 2.f});
@@ -58,16 +60,28 @@ void Map::addLayer(const std::string& filePath, float speed) {
     }
 }
 
+void Map::playVideo() {
+    if (m_videoBackground) {
+        m_videoBackground->play();
+    }
+}
+
+
 
 void Map::update(float dt) {
     for (auto& layer : m_parallaxLayers) {
         layer->update(dt);
     }
+    if (m_videoBackground) {
+        m_videoBackground->update(dt);
+    }
 }
 
 
 void Map::draw(sf::RenderWindow& window) {
-
+    if (m_videoBackground) {
+        m_videoBackground->draw(window);
+    }
     for (auto& layer : m_parallaxLayers) {
         layer->draw(window);
     }

@@ -6,7 +6,6 @@
 #include <cmath>
 #include "UI/menu.h"
 #include "Environment/Map.h"
-#include "UI/VideoBackground.h"
 
 enum class State {
     MAIN_MENU,
@@ -22,7 +21,6 @@ int main() {
     window.setFramerateLimit(60);
 
     // folder, prefix, extension, count, fps, loop
-    VideoBackground video("../../../Assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
 
     
 
@@ -67,9 +65,9 @@ int main() {
             if(const auto& keyEvent = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyEvent->code == sf::Keyboard::Key::Escape)
                     window.close();
-                    if (keyEvent->code == sf::Keyboard::Key::K && currentState == State::PLAYING) {
-                        video.play();
-                    }
+                if (keyEvent->code == sf::Keyboard::Key::K && currentState == State::PLAYING) {
+                        gameMap.playVideo();
+                }
 
 
             }
@@ -130,8 +128,7 @@ int main() {
         else if (currentState == State::PLAYING){
             gameMap.update(Utils::Time::fixedDeltaTime);
             gameMap.draw(window);
-            video.update(Utils::Time::fixedDeltaTime);
-            video.draw(window);
+
             
 
         }
