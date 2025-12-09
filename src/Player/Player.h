@@ -22,7 +22,7 @@ private:
     float timeToEmptyRage;
     float rageDownCooldown;
     int lives;
-
+	string state;
     void animations();  
 public:
     Player(sf::Vector2f position, float moveSpeed);

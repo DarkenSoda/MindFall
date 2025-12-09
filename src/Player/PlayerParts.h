@@ -24,5 +24,6 @@ public:
 	void drawBehindParts(RenderWindow& window);
 	void drawFrontParts(RenderWindow& window);
 	void rotateWheels();
-};
+	void setRotationSpeed(float speed);
 
+};
