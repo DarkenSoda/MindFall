@@ -55,7 +55,6 @@ void HealthBar::setHealth(int currentHealth)
         sf::Vector2i(frameWidth, frameHeight)
     ));
     
-    std::cout << "[HealthBar] Health set to: " << currentHealth << " (Index: " << index << ", Left: " << left << ")" << std::endl;
 }
 
 void HealthBar::render(sf::RenderWindow& window)
