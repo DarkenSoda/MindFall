@@ -17,7 +17,7 @@ EventHandler::~EventHandler()
 };
 
 void EventHandler::handleEvent() {
-	if (player->getRage() >= 100.0f&& !eventDone)
+	if (player->getRage() >= 100.0f && !eventDone)
 	{
 		eventDone = true;
 
