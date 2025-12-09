@@ -7,6 +7,8 @@
 #include "../UI/Menu.h"
 #include "../UI/HealthBar.h"
 #include "../Environment/Map.h"
+#include "../Spawner/WorldSpawner.h"
+#include "../BossSystem/Boss.h"
 
 class GameManager
 {
@@ -34,6 +36,10 @@ private:
 	State currentState = State::MAIN_MENU;
 	Map gameMap;
 	VideoBackground* videoBg;
+
+	Boss boss;
+	WorldSpawner spawner;
+
 	// Constants for view resizing
 	const float WINDOW_WIDTH = 1920.f;
 	const float WINDOW_HEIGHT = 1080.f;

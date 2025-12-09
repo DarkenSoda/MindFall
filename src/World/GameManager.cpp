@@ -3,8 +3,10 @@
 
 GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world)
 	: startMenu(1920, 1080), 
-	  gameOverMenu(1920, 1080, true),
-	  healthBar(nullptr)
+	gameOverMenu(1920, 1080, true),
+	healthBar(nullptr),
+	boss(world, { WINDOW_WIDTH / 2.f, 162.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
+	spawner(world)
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -13,17 +15,14 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 1, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	gameMap.init(*world);
 
-	// Initialize HealthBar
 	if (healthBarTexture.loadFromFile("assets/player/hb.png")) {
-		std::cout << "[GameManager] HealthBar texture loaded: " << healthBarTexture.getSize().x << "x" << healthBarTexture.getSize().y << std::endl;
 		healthBar = new HealthBar(healthBarTexture, 6);
-		std::cout << "[GameManager] HealthBar created successfully" << std::endl;
-	} else {
-		std::cout << "[GameManager] ERROR: Failed to load healthbar texture from assets/player/hb.png" << std::endl;
 	}
+
+	this->eventHandler->setSpawner(&spawner);
 }
 
 GameManager::~GameManager()
@@ -106,6 +105,9 @@ void GameManager::gameManagerUpdate()
 
 	if (currentState == State::PLAYING)
 	{
+		boss.update(Utils::Time::deltaTime);
+		spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
+
 		world->Step(Utils::Time::fixedDeltaTime, 8, 3);
 
 		eventHandler->handleEvent(Utils::Time::deltaTime);
@@ -142,6 +144,8 @@ void GameManager::gameManagerRender()
 		// Draw game world with game view
 		window->setView(*gameView);
 		gameMap.draw(*window);
+		spawner.draw(*window);
+		boss.render(*window);
 		player->drawPlayer(*window);
 
 		// Switch to default view for UI layer
@@ -150,7 +154,6 @@ void GameManager::gameManagerRender()
 		// Draw HealthBar on top
 		if (healthBar != nullptr)
 		{
-			std::cout << "[Render] Drawing HealthBar" << std::endl;
 			healthBar->render(*window);
 		}
 	}
