@@ -7,6 +7,9 @@
 #include "Player/Player.h"
 #include "World/EventHandler.h"
 #include "Player/Bullet.h"
+#include "Spawner/WorldSpawner.h"
+#include <cmath>
+#include "BossSystem/Boss.h"
 
 // Constants
 const float WINDOW_WIDTH = 1920.f;
