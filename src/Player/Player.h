@@ -6,11 +6,13 @@
 #include "../AnimationSystem/Animation.h"
 #include "PlayerCommand.h"
 #include "InputHandler.h"
+#include "PlayerParts.h"
 
 class Player {
 private:
     sf::Vector2f position;
     Animator animator;
+    PlayerParts* playerParts;
     float moveSpeed;
     float rage;
     float multilyer;
@@ -24,6 +26,8 @@ private:
 public:
     Player(sf::Vector2f position, float moveSpeed);
 
+    ~Player();
+
     void move(PlayerCommand cmd, float deltaTime);
 
     void setPlayerPosition(sf::Vector2f position);
@@ -34,7 +38,7 @@ public:
 
     sf::FloatRect getGlobalBound();
 
-    sf::Sprite& CurrentAnimaton();
+   void drawPlayer(sf::RenderWindow& window);
 
     void update(float deltatime);
 };

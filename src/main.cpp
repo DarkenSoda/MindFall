@@ -66,7 +66,7 @@ int main() {
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
         window.clear();
-        window.draw(player.CurrentAnimaton());
+        player.drawPlayer(window);
         window.setView(gameView);
         window.display();
     }
