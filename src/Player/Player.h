@@ -25,9 +25,6 @@ private:
     void animations();  
 public:
     Player(sf::Vector2f position, float moveSpeed);
-    Player();
-
-    
 
     ~Player();
 

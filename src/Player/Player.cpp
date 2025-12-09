@@ -6,23 +6,8 @@ void Player::animations()
 {
     animator
         .SetAnimation("idle", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
-        .SetAnimation("left", std::make_unique<Animation>("assets/player/hand.png", 0.125f, 1))
-        .SetAnimation("right", std::make_unique<Animation>("assets/player/plate.png", 0.125f, 1));
-}
-
-Player::Player()
-{
-    this->moveSpeed = 250.0f;
-    this->position = {200.0f, 800.0f};
-    animations();
-    rage = 1.0f;
-    multilyer = 20.5f;;
-    rageDirection = false;
-    maximumRage = 100.0f;
-    minimumRage = 0.0f;
-    timeToEmptyRage = 5.0f;
-    rageDownCooldown = 1.0f;
-    playerParts = new PlayerParts(position);
+        .SetAnimation("left", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1))
+        .SetAnimation("right", std::make_unique<Animation>("assets/player/happy.png", 0.125f, 1));
 }
 
 Player::Player(sf::Vector2f position, float moveSpeed)

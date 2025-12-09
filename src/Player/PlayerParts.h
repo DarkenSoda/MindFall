@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <stdexcept>
 
 using namespace std;
 using namespace sf;

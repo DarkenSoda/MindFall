@@ -5,6 +5,8 @@
 #include "CollisionSystem/CollisionHandler.h"
 #include "Player/InputHandler.h" 
 #include "Player/Player.h"
+#include "World/EventHandler.h"
+#include "Player/Bullet.h"
 
 // Constants
 const float WINDOW_WIDTH = 1920.f;
@@ -25,22 +27,16 @@ int main() {
     InputHandler inputHandler; 
     Player player({ 200.f, 800.f }, 200.f);
 
-    // Create Game Manager
     GameManager gameManager(&window, &inputHandler, &player, &gameView, &world);
 
     while (window.isOpen()) {
-        
-        // Update Delta Time
         Utils::Time::Update();
 
-        // 1. Handle Events (Inputs, Resize, Window Close)
         gameManager.handleEvents();
 
-        // 2. Update Game Logic (States, Physics, Menus)
-        gameManager.gameManagerUpdate();
-
-        // 3. Render
         window.clear();
+        window.setView(gameView);
+        gameManager.gameManagerUpdate();
         gameManager.gameManagerRender();
         window.display();
     }

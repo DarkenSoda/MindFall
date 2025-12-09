@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "PlayerParts.h"
 
 PlayerParts::PlayerParts(sf::Vector2f position)
