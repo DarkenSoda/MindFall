@@ -136,7 +136,7 @@ void GameManager::gameManagerRender()
 		window->setView(*gameView);
 		
 		gameMap.draw(*window);
-		// player->drawPlayer(*window);
+		player->drawPlayer(*window);
 	}
 	//  if (currentState == State::GAME_OVER)
 	// {
