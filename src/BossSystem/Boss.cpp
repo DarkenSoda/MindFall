@@ -36,7 +36,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     body = world->CreateBody(&bodyDef);
     
     b2PolygonShape boxShape;
-    boxShape.SetAsBox((bossSize.x / 2.f) / SCALE, (bossSize.y / 2.f) / SCALE);
+    boxShape.SetAsBox((bossSize.x / 2.f) / SCALE, (bossSize.y / 2.f) / SCALE, b2Vec2(0.f, -50.f / SCALE), 0.f);
 
     b2FixtureDef fixtureDef;
     fixtureDef.friction = 0.0f;
@@ -279,7 +279,7 @@ void Boss::render(sf::RenderWindow& window) {
 
     sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
     debugBox.setOrigin({ size.x / 2.f, size.y / 2.f });
-    debugBox.setPosition(position);
+    debugBox.setPosition(sf::Vector2f(position.x, position.y - 50.f));
     debugBox.setFillColor(sf::Color::Transparent);
     debugBox.setOutlineColor(sf::Color(0, 255, 0, 255));
     debugBox.setOutlineThickness(2.f);

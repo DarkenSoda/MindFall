@@ -19,8 +19,6 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
 
-    WorldSpawner spawner(&world);
-
     while (window.isOpen()) {
         Utils::Time::Update();
 
@@ -60,12 +58,8 @@ int main() {
 
         world.Step(Utils::Time::fixedDeltaTime, 8, 3);
 
-        spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
-
         window.clear();
         window.setView(gameView);
-
-        spawner.draw(window);
 
         window.display();
     }
