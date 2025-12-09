@@ -5,6 +5,7 @@
 #include "../World/EventHandler.h"
 #include "../Time.h"
 
+
 class GameManager
 {
 	InputHandler* inputHandler;
@@ -16,5 +17,6 @@ public:
 	GameManager(InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
 	~GameManager();
 	void gameManagerUpdate();
+
 
 };

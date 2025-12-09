@@ -8,6 +8,10 @@ GameManager::GameManager(InputHandler* inputHandler, Player* player, sf::View* g
 	this->gameView = gameView;
 	this->world = world;
 	eventHandler = new EventHandler(inputHandler, player, gameView);
+
+	
+
+
 }
 
 GameManager::~GameManager()
@@ -20,4 +24,6 @@ void GameManager::gameManagerUpdate()
 	eventHandler->handleEvent();
 	player->move(inputHandler->getCommand(), Utils::Time::deltaTime);
 	player->update(Utils::Time::deltaTime);
+
+
 }
