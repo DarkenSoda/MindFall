@@ -1,42 +1,53 @@
 #include "ParallaxLayer.h"
+#include <iostream>
 
-ParallaxLayer::ParallaxLayer()
-    : speed(0.0f), texture(), sprite1(texture), sprite2(texture)
+bool ParallaxLayer::load(const std::string& filePath, float scrollSpeed)
 {
-}
-
-bool ParallaxLayer::load(const std::string& file, float scrollSpeed)
-{
-    if (!texture.loadFromFile(file))
+    if (!m_texture.loadFromFile(filePath)) {
+        std::cerr << "Parallax Error: Failed to load " << filePath << std::endl;
         return false;
+    }
 
-    texture.setRepeated(true);
+    m_texture.setRepeated(true);
 
-    sprite1.setTexture(texture);
-    sprite2.setTexture(texture);
 
-    sprite2.setPosition({ static_cast<float>(texture.getSize().x), 0.0f });
+    m_sprite1 = std::make_unique<sf::Sprite>(m_texture);
+    m_sprite2 = std::make_unique<sf::Sprite>(m_texture);
 
-    speed = scrollSpeed;
+    m_speed = scrollSpeed;
+
+
+    float height = static_cast<float>(m_texture.getSize().y);
+
+    m_sprite2->setPosition({0.0f, -height});
+
     return true;
 }
 
 void ParallaxLayer::update(float dt)
 {
-    sprite1.move({ -speed * dt, 0 });
-    sprite2.move({ -speed * dt, 0 });
 
-    float width = texture.getSize().x;
+    if (!m_sprite1 || !m_sprite2) return;
 
-    if (sprite1.getPosition().x <= -width)
-        sprite1.setPosition({ sprite2.getPosition().x + width, 0.0f });
 
-    if (sprite2.getPosition().x <= -width)
-        sprite2.setPosition({ sprite1.getPosition().x + width, 0.0f });
+    m_sprite1->move({0.0f, m_speed * dt});
+    m_sprite2->move({0.0f, m_speed * dt});
+
+    float height = static_cast<float>(m_texture.getSize().y);
+
+
+    if (m_sprite1->getPosition().y >= height) {
+        m_sprite1->setPosition({0.0f, m_sprite2->getPosition().y - height});
+    }
+
+    if (m_sprite2->getPosition().y >= height) {
+        m_sprite2->setPosition({0.0f, m_sprite1->getPosition().y - height});
+    }
 }
 
 void ParallaxLayer::draw(sf::RenderWindow& window)
 {
-    window.draw(sprite1);
-    window.draw(sprite2);
+
+    if (m_sprite1) window.draw(*m_sprite1);
+    if (m_sprite2) window.draw(*m_sprite2);
 }
