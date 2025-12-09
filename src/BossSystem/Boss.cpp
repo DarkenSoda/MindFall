@@ -56,6 +56,14 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     }
 
     attackTextures.push_back(projectileTex);
+
+    loadSpriteSheet("assets/boss.png");
+
+    addAnimation("idle", 0, 5, 0.15f, true);
+    addAnimation("laser", 1, 9, 0.2f, false);
+    addAnimation("projectile", 2, 5, 0.2f, false);
+
+    playAnimation("idle");
 }
 
 Boss::~Boss() {
@@ -65,18 +73,18 @@ Boss::~Boss() {
     }
 }
 
-bool Boss::loadSpriteSheet(const std::string& texturePath, int frameWidth, int frameHeight) {
+bool Boss::loadSpriteSheet(const std::string& texturePath) {
     if (!spriteSheet.loadFromFile(texturePath)) {
         std::cerr << "Failed to load boss sprite sheet: " << texturePath << std::endl;
         return false;
     }
-
-    this->frameWidth = frameWidth;
-    this->frameHeight = frameHeight;
+    this->frameWidth = spriteSheet.getSize().x / 9;
+    this->frameHeight = spriteSheet.getSize().y / 3;
 
     sprite.setTexture(spriteSheet);
     sprite.setTextureRect(sf::IntRect({0, 0}, {frameWidth, frameHeight}));
-    sprite.setOrigin({frameWidth / 2.f, frameHeight / 2.f});
+    sprite.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
+    sprite.setScale({0.2f, 0.2f});
 
     return true;
 }
@@ -167,7 +175,7 @@ void Boss::updateAnimation(float deltaTime) {
                 currentFrame = 0;
             } else {
                 currentFrame = anim.frameCount - 1;
-                // switch to idle
+                playAnimation("idle");
             }
         }
 
@@ -196,10 +204,13 @@ void Boss::performAttack() {
     
     int choice = dis(gen);
     
-    if (choice <= 80) {
+    if (choice <= 70) {
         projectileAttack();
-    } else {
+        playAnimation("projectile");
+    }
+    else {
         laserAttack();
+        playAnimation("laser");
     }
 }
 

@@ -18,7 +18,7 @@ int main() {
     CollisionHandler collisionHandler;
     world.SetContactListener(&collisionHandler);
 
-    Boss boss(&world, sf::Vector2f(WINDOW_WIDTH / 2.f, 100.f), sf::Vector2f(200.f, 200.f), WINDOW_WIDTH, WINDOW_HEIGHT);
+    Boss boss(&world, sf::Vector2f(WINDOW_WIDTH / 2.f, 100.f), sf::Vector2f(400.f, 180.f), WINDOW_WIDTH, WINDOW_HEIGHT);
  
     while (window.isOpen()) {
         Utils::Time::Update();

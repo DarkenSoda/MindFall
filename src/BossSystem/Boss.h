@@ -56,7 +56,7 @@ public:
     Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, float windowWidth, float windowHeight);
     ~Boss();
 
-    bool loadSpriteSheet(const std::string& texturePath, int frameWidth, int frameHeight);
+    bool loadSpriteSheet(const std::string& texturePath);
     void addAnimation(const std::string& name, int row, int frameCount, float switchTime = 0.1f, bool loop = true);
     void playAnimation(const std::string& name);
     
