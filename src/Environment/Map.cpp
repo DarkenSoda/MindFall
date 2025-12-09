@@ -8,16 +8,16 @@ static const float PPM = 30.0f;
 void Map::init(b2World& world) {
    
 
-    if (!m_groundTexture.loadFromFile("assets/ground.jpeg")) 
-        std::cerr << "Map Error: Failed to load assets/ground.png" << std::endl;
-    else
-        m_groundShape.setFillColor(sf::Color(100, 250, 50)); 
+    if (!m_groundTexture.loadFromFile("assets/FINAL_FLOOR.png")) {
+        std::cerr << "Map Error: Failed to load assets/FINAL_FLOOR.png" << std::endl;
+        m_groundShape.setFillColor(sf::Color(100, 250, 50));
+    } 
 
     
 
     // --- GROUND SETUP (Bottom 15% of 1080p) ---
     float w = 2000.f; 
-    float h = 1080.f * 0.10f; 
+    float h = 1080.f * 0.23f; 
     float x = 1920.f / 2.f; 
     float y = 1080.f - (h / 2.f); 
 
