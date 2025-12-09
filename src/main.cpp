@@ -2,6 +2,7 @@
 #include <box2d/box2d.h>
 #include "Time.h"
 #include "CollisionSystem/CollisionHandler.h"
+#include <memory> ///for unique ptr
 #include <cmath>
 #include "UI/menu.h"
 #include "Environment/Map.h"
@@ -20,12 +21,14 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
-    // folder, prefix, extension, count, fps
-    VideoBackground video("frames", "frame", ".png", 120, 30.f);
+    // folder, prefix, extension, count, fps, loop
+    VideoBackground video("../../../Assets/Background_Frames/", "frame", ".png", 3, 3.f, true);
+
+    
 
     sf::Texture bgMain, bgGameOver;
     sf::Texture btnStart, btnQuit, btnRetry;
-
+    
     if (!bgMain.loadFromFile("../../../Assets/images.jpeg")) return -1;
     if (!bgGameOver.loadFromFile("../../../Assets/images.jpeg")) return -1;
 
@@ -49,9 +52,9 @@ int main() {
       Map gameMap;
     
     gameMap.init(world, nullptr);
-    gameMap.addLayer("../../../Assets/background_2.png", 20.f);
-    gameMap.addLayer("../../../Assets/background_3.png", 40.f);
-    gameMap.addLayer("../../../Assets/background_4.png", 80.f);
+    // gameMap.addLayer("../../../Assets/background_2.png", 20.f);
+    // gameMap.addLayer("../../../Assets/background_3.png", 40.f);
+    // gameMap.addLayer("../../../Assets/background_4.png", 80.f);
 
 
     while (window.isOpen()) {
@@ -64,6 +67,11 @@ int main() {
             if(const auto& keyEvent = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyEvent->code == sf::Keyboard::Key::Escape)
                     window.close();
+                    if (keyEvent->code == sf::Keyboard::Key::K && currentState == State::PLAYING) {
+                        video.play();
+                    }
+
+
             }
 
 
@@ -90,6 +98,7 @@ int main() {
                 gameView.setViewport(sf::FloatRect({ posX, posY }, { sizeX, sizeY }));
             }
         }
+ 
 
         if(currentState == State::MAIN_MENU){
             int action = mainMenu.handleInput(window);
@@ -121,6 +130,10 @@ int main() {
         else if (currentState == State::PLAYING){
             gameMap.update(Utils::Time::fixedDeltaTime);
             gameMap.draw(window);
+            video.update(Utils::Time::fixedDeltaTime);
+            video.draw(window);
+            
+
         }
         else if (currentState == State::GAME_OVER){
             gameOverMenu.draw(window);

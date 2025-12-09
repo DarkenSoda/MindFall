@@ -10,8 +10,12 @@ public:
         const std::string& prefix,
         const std::string& extension,
         int imageCount,
-        float fps
+        float fps,
+        bool loop = false
     );
+
+    void play();
+    void stop();
 
     void update(float dt);
     void draw(sf::RenderWindow& window);
@@ -20,7 +24,9 @@ private:
     std::vector<sf::Texture> frames;
     std::vector<sf::Sprite> sprites;
 
-    float frameTime;     // time per frame (1/fps)
+    float frameTime;   
     float timer = 0.f;
     size_t currentFrame = 0;
+    bool isPlaying = false;
+    bool loop;
 };

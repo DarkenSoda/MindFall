@@ -4,7 +4,7 @@
 
 static const float PPM = 30.0f;
 
-// 1. UPDATED INIT (Only Ground)
+
 void Map::init(b2World& world, const sf::Texture* groundTexture) {
     m_groundTexturePtr = groundTexture;
 
