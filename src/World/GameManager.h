@@ -91,6 +91,13 @@ private:
     sf::Text playTimeText;
 
 	SoundPlayer bulletSound;
+	SoundPlayer introMusic;
+	SoundPlayer bossMusic;
+	SoundPlayer gameloopMusic;
+	SoundPlayer ouchSound;
+	SoundPlayer coinSound;
+	SoundPlayer bossHurt;
+
 
 	sf::RectangleShape rageEffectRect;
 	sf::Shader rageEffectShader;

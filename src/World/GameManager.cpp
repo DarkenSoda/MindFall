@@ -89,6 +89,22 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 
 	// Load bullet sound
 	if (!bulletSound.load("assets/Sound/pew.mp3")) {
+		std::cerr << "Warning: Failed to load pew sound" << std::endl;
+	}
+
+	if (!introMusic.load("assets/Sound/intro.mp3")) {
+		std::cerr << "Warning: Failed to load intrp sound" << std::endl;
+	}
+
+	if (!bossMusic.load("assets/Sound/bossMusic.mp3")) {
+		std::cerr << "Warning: Failed to load boss music sound" << std::endl;
+	}
+
+	if (!gameloopMusic.load("assets/Sound/gameloop.mp3")) {
+		std::cerr << "Warning: Failed to load gameloop sound" << std::endl;
+	}
+
+	if (!ouchSound.load("assets/Sound/ouch.mp3")) {
 		std::cerr << "Warning: Failed to load bullet sound" << std::endl;
 	}
 
@@ -106,6 +122,18 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	} else {
 		std::cerr << "Warning: Shaders not available on this system" << std::endl;
 	}
+	if (!coinSound.load("assets/Sound/coin.mp3")) {
+		std::cerr << "Warning: Failed to load coin sound" << std::endl;
+	}
+
+	if (!bossHurt.load("assets/Sound/bossHurt.mp3")) {
+		std::cerr << "Warning: Failed to load coin sound" << std::endl;
+	}
+
+	introMusic.loop();
+	bossMusic.loop();
+	gameloopMusic.loop();
+	introMusic.play();
 }
 
 GameManager::~GameManager()
@@ -204,6 +232,8 @@ void GameManager::gameManagerUpdate()
 
 		if (bossState == BossState::INTRO) {
 			updateBossIntro(Utils::Time::deltaTime);
+			introMusic.Stop();
+			bossMusic.play();
 		} else if (bossState == BossState::ACTIVE) {
 			boss.update(Utils::Time::deltaTime);
 		}
@@ -358,6 +388,7 @@ void GameManager::gameManagerRender()
 
 void GameManager::applyDamageToPlayer()
 {
+	ouchSound.play();
 	player->takeDamage(1);
 	
 	if (player->getLives() <= 0) {
@@ -367,6 +398,7 @@ void GameManager::applyDamageToPlayer()
 
 void GameManager::applyDamageToBoss()
 {
+	bossHurt.play();
 	boss.takeDamage();
 	
 	if (boss.getHP() <= 0) {
@@ -397,6 +429,7 @@ void GameManager::spawnParticleAt(sf::Vector2f position, sf::Color color, int co
 
 void GameManager::addScore(int amount)
 {
+	coinSound.play();
 	score += amount;
 }
 

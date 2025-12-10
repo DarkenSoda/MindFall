@@ -56,6 +56,16 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
         std::cerr << "Failed to generate mipmaps for boss projectile texture." << std::endl;
     }
 
+    if (!orbAttackSound.load("assets/Sound/bossOrbAttack.mp3")) {
+        std::cerr << "Warning: Failed to load coin sound" << std::endl;
+    }
+	orbAttackSound.setPitch(1.5f);
+
+    /*if (!bossHurt.load("assets/Sound/bossHurt.mp3")) {
+        std::cerr << "Warning: Failed to load coin sound" << std::endl;
+    }*/
+
+
     attackTextures.push_back(projectileTex);
 
     loadSprites("assets/boss1.png", "assets/boss2.png", "assets/boss3.png");
@@ -215,10 +225,12 @@ void Boss::performAttack() {
     int choice = dis(gen);
     
     if (choice <= 70) {
+		orbAttackSound.play();
         projectileAttack();
         playAnimation("projectile");
     }
     else {
+
         laserAttack();
         playAnimation("laser");
     }

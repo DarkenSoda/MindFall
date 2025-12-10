@@ -14,4 +14,8 @@ public:
 
     bool load(const std::string& path);
     void play();
+    void Stop();
+	void loop();
+	void setVolume(float volume);
+	void setPitch(float pitch);
 };
