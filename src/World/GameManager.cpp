@@ -91,6 +91,21 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	if (!bulletSound.load("assets/Sound/pew.mp3")) {
 		std::cerr << "Warning: Failed to load bullet sound" << std::endl;
 	}
+
+	// Initialize rage effect shader
+	hasRageEffectShader = false;
+	if (sf::Shader::isAvailable()) {
+		if (rageEffectShader.loadFromFile("assets/shaders/rage_effect.frag", sf::Shader::Type::Fragment)) {
+			rageEffectRect.setSize(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+			rageEffectRect.setPosition({ 0.f, 0.f });
+			rageEffectRect.setFillColor(sf::Color::White);
+			hasRageEffectShader = true;
+		} else {
+			std::cerr << "Warning: Failed to load rage effect shader" << std::endl;
+		}
+	} else {
+		std::cerr << "Warning: Shaders not available on this system" << std::endl;
+	}
 }
 
 GameManager::~GameManager()
@@ -241,6 +256,12 @@ void GameManager::gameManagerUpdate()
 		// Update score and play time text
         scoreText.setString("Score: " + std::to_string(score));
         playTimeText.setString("Time: " + std::to_string(static_cast<int>(playTime)) + "s");
+
+		// Update rage effect shader
+		if (hasRageEffectShader) {
+			rageEffectShader.setUniform("time", Utils::Time::time);
+			rageEffectShader.setUniform("resolution", sf::Glsl::Vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+		}
 	}
 	if(currentState == State::BEGINING_SCENE)
 	{
@@ -274,12 +295,10 @@ void GameManager::gameManagerRender()
         
         player->drawPlayer(*window);
 
-        // Draw bullets with game view
         for (auto& bullet : bullets) {
             bullet.render(*window);
         }
 
-		// Draw particles with game view
 		for (const auto& particle : particles) {
 			const_cast<Particle&>(particle).draw(*window);
 		}
@@ -298,9 +317,16 @@ void GameManager::gameManagerRender()
             bulletCooldownUI->render(*window);
         }
 
-		// Draw score and play time text
-        window->draw(scoreText);
-        window->draw(playTimeText);
+		if (hasRageEffectShader && player->isInRageMode()) {
+			rageEffectRect.setFillColor(sf::Color(255, 255, 255, 50));
+			sf::RenderStates states;
+			states.blendMode = sf::BlendAlpha;
+			states.shader = &rageEffectShader;
+			window->draw(rageEffectRect, states);
+		}
+
+		window->draw(scoreText);
+		window->draw(playTimeText);
     }
     else if (currentState == State::BEGINING_SCENE)
     {

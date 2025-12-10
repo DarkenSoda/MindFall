@@ -92,6 +92,10 @@ private:
 
 	SoundPlayer bulletSound;
 
+	sf::RectangleShape rageEffectRect;
+	sf::Shader rageEffectShader;
+	bool hasRageEffectShader;
+
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
 	~GameManager();

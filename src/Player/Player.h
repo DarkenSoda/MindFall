@@ -27,6 +27,7 @@ private:
 	float rage;         // reset rage
     float multiplier;
     bool rageDirection;   //rageDirection reset
+    
     float maximumRage;
     float minimumRage;
     float timeToEmptyRage;
@@ -78,5 +79,7 @@ public:
     
     b2Body* getBody() const { return body; }
 
-	void resetPlayer();
+    void resetPlayer();
+
+    bool isInRageMode() const { return rageDirection; }
 };
