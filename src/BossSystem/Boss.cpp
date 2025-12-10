@@ -303,6 +303,10 @@ void Boss::resetBoss()
 	hp = 3;
 	isIntroPhase = true;
 
+	for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+		fixture->SetSensor(true);
+	}
+
 	projectiles.clear();
 	laser.laserReset();
 }

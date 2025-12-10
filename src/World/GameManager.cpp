@@ -279,16 +279,22 @@ void GameManager::gameManagerRender()
 	else if (currentState == State::GAME_OVER)
 	{
 		//resets
+		inputHandler->setDirection(false);
+		gameView->setRotation(sf::degrees(0.0f));
+		bullets.clear();
+		particles.clear();
 		player->resetPlayer();
 		spawner.resetSpawner();
+		boss.resetBoss();
+
 		delete eventHandler;
 		eventHandler = new EventHandler(inputHandler, player, gameView);
+		eventHandler->setSpawner(&spawner);
+	
 		score = 0;
 		playTime = 0.0f;
 		bossState = BossState::NOT_SPAWNED;
-		boss.resetBoss();
 
-		window->setView(window->getDefaultView());
 		gameOverMenu.draw(*window);
 	}
 }
@@ -352,7 +358,6 @@ void GameManager::checkBossSpawn()
 					0.0f
 				);
 				
-				// Ensure collider is disabled during intro (set as sensor)
 				for (b2Fixture* fixture = bossBody->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 					fixture->SetSensor(true);
 				}

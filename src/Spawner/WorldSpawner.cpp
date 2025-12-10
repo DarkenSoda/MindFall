@@ -152,5 +152,5 @@ void WorldSpawner::resetType() {
 void WorldSpawner::resetSpawner()
 {
     collectibles.clear();
-	spawnTypeReversed = false;
+	resetType();
 }
