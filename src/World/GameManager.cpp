@@ -10,7 +10,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, -300.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
 	spawner(world),
-	shootCooldown(sf::seconds(0.3f)),
+	shootCooldown(sf::seconds(2.0f)),
 	randomGen(std::random_device{}()),
 	score(0),
 	playTime(0.0f),

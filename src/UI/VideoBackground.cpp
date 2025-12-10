@@ -1,5 +1,8 @@
 #include "VideoBackground.h"
 #include <iostream>
+#include <vector>
+#include <thread>
+#include <mutex>
 
 VideoBackground::VideoBackground(
     const std::string& folder,
@@ -10,28 +13,44 @@ VideoBackground::VideoBackground(
     bool loop
 ) {
     frameTime = 1.f / fps;
+    this->loop = loop;
 
-
-    frames.reserve(imageCount);
+    frames.resize(imageCount);
     sprites.reserve(imageCount);
 
-    for (int i = 0; i < imageCount; i++) {
-        std::string path = folder + "/" + prefix + std::to_string(i+1) + extension;
+    unsigned int numThreads = std::thread::hardware_concurrency();
+    if (numThreads == 0) numThreads = 4;
 
-        // 2. Load into a temporary texture
-        sf::Texture tempTexture;
-        if (!tempTexture.loadFromFile(path)) {
-            std::cerr << "Failed to load: " << path << "\n";
-            continue; 
+    auto loadChunk = [&](int start, int end) {
+        for (int i = start; i < end; i++) {
+            std::string path = folder + "/" + prefix + std::to_string(i + 1) + extension;
+
+            if (!frames[i].loadFromFile(path)) {
+                std::cerr << "Failed to load: " << path << "\n";
+            }
         }
+        };
 
-        // 3. Move the texture into the vector
-        // In SFML 3, Textures are move-only, so we must use std::move or emplace
-        frames.push_back(std::move(tempTexture));
+    std::vector<std::thread> threads;
+    int chunkSize = (imageCount + numThreads - 1) / numThreads;
 
+    for (unsigned int t = 0; t < numThreads; t++) {
+        int start = t * chunkSize;
+        int end = std::min(start + chunkSize, imageCount);
 
-        sprites.emplace_back(frames.back()); 
-        this->loop = loop;
+        if (start < imageCount) {
+            threads.emplace_back(loadChunk, start, end);
+        }
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    for (int i = 0; i < imageCount; i++) {
+        if (frames[i].getSize().x > 0) {
+            sprites.emplace_back(frames[i]);
+        }
     }
 }
 
@@ -42,19 +61,17 @@ void VideoBackground::update(float dt) {
 
     while (timer >= frameTime) {
         timer -= frameTime;
-        // currentFrame = (currentFrame + 1) % sprites.size();
-        if(loop)
+        if (loop)
             currentFrame = (currentFrame + 1) % sprites.size();
-        else
-        {
-             if (currentFrame >= sprites.size() - 1 ) {
-            stop(); // Animation finished: Hide and Reset
-            return;
+        else {
+            if (currentFrame >= sprites.size() - 1) {
+                stop();
+                return;
+            }
+            else
+                currentFrame++;
         }
-        else
-            currentFrame++;
-        }
-       
+
     }
 }
 
@@ -63,8 +80,8 @@ void VideoBackground::play() {
 }
 
 void VideoBackground::stop() {
-    isPlaying = false; 
-    currentFrame = 0; 
+    isPlaying = false;
+    currentFrame = 0;
     timer = 0.f;
 }
 

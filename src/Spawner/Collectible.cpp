@@ -73,13 +73,13 @@ void Collectible::draw(sf::RenderWindow& window) {
         window.draw(sprite);
 
         // debug draw collider wireframe
-        sf::CircleShape debugCircle(radius);
-        debugCircle.setOrigin({ radius, radius });
-        debugCircle.setPosition(position);
-        debugCircle.setFillColor(sf::Color::Transparent);
-        debugCircle.setOutlineColor(sf::Color::Blue);
-        debugCircle.setOutlineThickness(1.f);
-        window.draw(debugCircle);
+        // sf::CircleShape debugCircle(radius);
+        // debugCircle.setOrigin({ radius, radius });
+        // debugCircle.setPosition(position);
+        // debugCircle.setFillColor(sf::Color::Transparent);
+        // debugCircle.setOutlineColor(sf::Color::Blue);
+        // debugCircle.setOutlineThickness(1.f);
+        // window.draw(debugCircle);
     }
 }
 

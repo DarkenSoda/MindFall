@@ -99,12 +99,12 @@ void Map::draw(sf::RenderWindow& window) {
     window.draw(m_groundShape);
 
     // debug draw ground collider wireframe
-    sf::RectangleShape debugRect;
-    debugRect.setSize(m_colliderSize);
-    debugRect.setOrigin({m_colliderSize.x / 2.f, m_colliderSize.y / 2.f});
-    debugRect.setPosition(m_colliderPosition);
-    debugRect.setFillColor(sf::Color::Transparent);
-    debugRect.setOutlineColor(sf::Color::Red);
-    debugRect.setOutlineThickness(2.f);
-    window.draw(debugRect);
+    // sf::RectangleShape debugRect;
+    // debugRect.setSize(m_colliderSize);
+    // debugRect.setOrigin({m_colliderSize.x / 2.f, m_colliderSize.y / 2.f});
+    // debugRect.setPosition(m_colliderPosition);
+    // debugRect.setFillColor(sf::Color::Transparent);
+    // debugRect.setOutlineColor(sf::Color::Red);
+    // debugRect.setOutlineThickness(2.f);
+    // window.draw(debugRect);
 }

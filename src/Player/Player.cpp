@@ -22,12 +22,12 @@ Player::Player(b2World* world, sf::Vector2f position, sf::Vector2f size, float m
     animations();
     
     rage = 1.0f;
-    multilyer = 20.5f;
+    multiplier = 8.0f;
     rageDirection = false;
     maximumRage = 100.0f;
     minimumRage = 0.0f;
     timeToEmptyRage = 5.0f;
-    rageDownCooldown = 1.0f;
+    rageDownCooldown = 0.0f;
     playerParts = new PlayerParts(position);
     lives = 5;
 	state = "idle";
@@ -198,21 +198,22 @@ void Player::drawPlayer(sf::RenderWindow& window)
     
     window.draw(sprite);
     playerParts->drawFrontParts(window);
+
+    // Debug draw collider
+    // b2Vec2 bodyPos = body->GetPosition();
+    // auto spriteBounds = animator.CurrentAnimaton().getGlobalBounds();
+    // float offsetX = spriteBounds.size.x / 2.f;
+    // float offsetY = spriteBounds.size.y / 2.f;
     
-    b2Vec2 bodyPos = body->GetPosition();
-    auto spriteBounds = animator.CurrentAnimaton().getGlobalBounds();
-    float offsetX = spriteBounds.size.x / 2.f;
-    float offsetY = spriteBounds.size.y / 2.f;
-    
-    sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
-    debugBox.setPosition(sf::Vector2f(
-        bodyPos.x * SCALE + offsetX - size.x / 2.f, 
-        bodyPos.y * SCALE + offsetY - size.y / 2.f
-    ));
-    debugBox.setFillColor(sf::Color::Transparent);
-    debugBox.setOutlineColor(sf::Color::Green);
-    debugBox.setOutlineThickness(2.f);
-    window.draw(debugBox);
+    // sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
+    // debugBox.setPosition(sf::Vector2f(
+    //     bodyPos.x * SCALE + offsetX - size.x / 2.f, 
+    //     bodyPos.y * SCALE + offsetY - size.y / 2.f
+    // ));
+    // debugBox.setFillColor(sf::Color::Transparent);
+    // debugBox.setOutlineColor(sf::Color::Green);
+    // debugBox.setOutlineThickness(2.f);
+    // window.draw(debugBox);
 }
 
 void Player::update(float deltatime)
@@ -222,19 +223,21 @@ void Player::update(float deltatime)
         rageDirection = true;
         rage = 100.0f;
         state = "stress";
-		playerParts->setRotationSpeed(20.0f);
+        playerParts->setRotationSpeed(20.0f);
+        moveSpeed = 400.0f;
     }
     if (rage <= minimumRage)
     {
         rageDirection = false;
-        multilyer = 20.5f;
+        multiplier = 8.0f;
         rage = 0.0f;
         state = "idle";
         playerParts->setRotationSpeed(10.0f);
+        moveSpeed = 300.0f;
     }
     if (!rageDirection)
     {
-        rage += deltatime * multilyer;
+        rage += deltatime * multiplier;
     }
     else
     {

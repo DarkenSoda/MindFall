@@ -108,13 +108,13 @@ void Bullet::render(sf::RenderWindow& window) {
     window.draw(sprite);
     
     // Debug draw collision box
-    b2Vec2 bodyPos = body->GetPosition();
-    sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
-    debugBox.setPosition(sf::Vector2f(bodyPos.x * SCALE - size.x / 2.f, bodyPos.y * SCALE - size.y / 2.f));
-    debugBox.setFillColor(sf::Color::Transparent);
-    debugBox.setOutlineColor(sf::Color::Cyan);
-    debugBox.setOutlineThickness(2.f);
-    window.draw(debugBox);
+    // b2Vec2 bodyPos = body->GetPosition();
+    // sf::RectangleShape debugBox(sf::Vector2f(size.x, size.y));
+    // debugBox.setPosition(sf::Vector2f(bodyPos.x * SCALE - size.x / 2.f, bodyPos.y * SCALE - size.y / 2.f));
+    // debugBox.setFillColor(sf::Color::Transparent);
+    // debugBox.setOutlineColor(sf::Color::Cyan);
+    // debugBox.setOutlineThickness(2.f);
+    // window.draw(debugBox);
 }
 
 sf::FloatRect Bullet::getBounds() const {

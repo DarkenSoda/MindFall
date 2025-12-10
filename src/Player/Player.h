@@ -23,7 +23,7 @@ private:
     PlayerParts* playerParts;
     float moveSpeed;
     float rage;
-    float multilyer;
+    float multiplier;
     bool rageDirection;
     float maximumRage;
     float minimumRage;
