@@ -12,6 +12,7 @@
 #include "BossAnimation.h"
 #include "../EntityTypes.h"
 #include "../EntityData.h"
+#include "../Sound/SoundPlayer.h"
 
 class Boss {
 private:
@@ -47,6 +48,9 @@ private:
 	int hp;  //reset hp 3
     EntityData entityData;
     bool isIntroPhase; //true
+
+	SoundPlayer orbAttackSound;
+    SoundPlayer laserAttackSound;
 
     const float SCALE = 30.f;
     

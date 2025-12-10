@@ -91,6 +91,13 @@ private:
     sf::Text playTimeText;
 
 	SoundPlayer bulletSound;
+	SoundPlayer introMusic;
+	SoundPlayer bossMusic;
+	SoundPlayer gameloopMusic;
+	SoundPlayer ouchSound;
+	SoundPlayer coinSound;
+	SoundPlayer bossHurt;
+
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);

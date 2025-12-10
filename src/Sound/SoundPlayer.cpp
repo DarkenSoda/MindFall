@@ -21,3 +21,23 @@ void SoundPlayer::play()
 {
     sound.play();
 }
+
+void SoundPlayer::Stop()
+{
+	sound.stop();
+}
+
+void SoundPlayer::loop()
+{
+	sound.setLooping(true);
+}
+
+void SoundPlayer::setVolume(float volume)
+{
+    sound.setVolume(volume);
+}
+
+void SoundPlayer::setPitch(float pitch)
+{
+    sound.setPitch(pitch);
+}
