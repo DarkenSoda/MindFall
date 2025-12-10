@@ -5,7 +5,7 @@
 #include "GameManager.h"
 
 GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world)
-	: startMenu(1920, 1080), 
+	: startMenu(1920, 1080),
 	gameOverMenu(1920, 1080, true),
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, -300.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
@@ -18,21 +18,19 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	bossStartPosition(WINDOW_WIDTH / 2.f, -300.f),
 	bossTargetPosition(WINDOW_WIDTH / 2.f, 162.f),
 	bossIntroSpeed(200.0f),
-	scoreText(uiFont , "", 30),
-	playTimeText(uiFont , "", 30)
-{
+	scoreText(uiFont, "", 30),
+	playTimeText(uiFont, "", 30) {
 	this->window = window;
 	this->inputHandler = inputHandler;
 	this->player = player;
 	this->gameView = gameView;
 	this->world = world;
-	
+
 	eventHandler = new EventHandler(inputHandler, player, gameView);
 	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	gameMap.init(*world);
 
-	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
-	{
+	if (!healthBarTexture.loadFromFile("assets/player/hp.png")) {
 		throw std::runtime_error("Failed to load health bar texture from assets/player/hp.png");
 	}
 	healthBar = new HealthBar(healthBarTexture, 5);
@@ -50,7 +48,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 		throw std::runtime_error("Failed to load bullet texture from assets/player/FINAL_LEVEL_UP.png");
 	}
 
-	rageBar = new RageBar(rageBarTexture , 5);
+	rageBar = new RageBar(rageBarTexture, 5);
 
 	if (!bulletUITexture.loadFromFile("assets/BulletUI.png")) {
 		throw std::runtime_error("Failed to load bullet UI texture from assets/BulletUI.png");
@@ -63,32 +61,36 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	bulletUITexture.setSmooth(true);
 	bulletUIGrayTexture.setSmooth(true);
 
-	if(!bulletUITexture.generateMipmap() || !bulletUIGrayTexture.generateMipmap()) {
+	if (!bulletUITexture.generateMipmap() || !bulletUIGrayTexture.generateMipmap()) {
 		throw std::runtime_error("Failed to generate mipmaps for bullet UI texture");
 	}
-	
+
 	bulletCooldownUI = new BulletCooldownUI(bulletUITexture, bulletUIGrayTexture);
 	bulletCooldownUI->setPosition(sf::Vector2f(1450.0f, 965.0f));
 
 	this->eventHandler->setSpawner(&spawner);
 
 	// Load font for UI
-    if (!uiFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-        throw std::runtime_error("Failed to load font for UI");
-    }
+	if (!uiFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+		throw std::runtime_error("Failed to load font for UI");
+	}
 
-    // Initialize score text
-    scoreText.setFont(uiFont);
-    scoreText.setCharacterSize(30);
-    scoreText.setFillColor(sf::Color::White);
+	// Initialize score text
+	scoreText.setFont(uiFont);
+	scoreText.setCharacterSize(30);
+	scoreText.setFillColor(sf::Color::White);
 	scoreText.setPosition({ 10.f, 10.f });
 
-    // Initialize play time text
-    playTimeText.setFont(uiFont);
-    playTimeText.setCharacterSize(30);
-    playTimeText.setFillColor(sf::Color::White);
+	// Initialize play time text
+	playTimeText.setFont(uiFont);
+	playTimeText.setCharacterSize(30);
+	playTimeText.setFillColor(sf::Color::White);
 	playTimeText.setPosition({ 10.f, 50.f });
 
+	// Load bullet sound
+	if (!bulletSound.load("assets/Sound/pew.mp3")) {
+		std::cerr << "Warning: Failed to load bullet sound" << std::endl;
+	}
 }
 
 GameManager::~GameManager()
@@ -118,6 +120,7 @@ void GameManager::handleEvents()
 					if (shootTimer.getElapsedTime() >= shootCooldown) {
 						sf::Vector2f playerPos = player->getPlayerPosition();
 						bullets.emplace_back(world, bulletTexture, playerPos.x + 45.f, playerPos.y, 20.f, 40.f);
+						bulletSound.play();
 						shootTimer.restart();
 					}
 				}

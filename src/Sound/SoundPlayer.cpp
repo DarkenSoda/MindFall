@@ -1,6 +1,10 @@
 #include "SoundPlayer.h"
 #include <iostream>
 
+SoundPlayer::SoundPlayer() : buffer(), sound(buffer)
+{
+}
+
 bool SoundPlayer::load(const std::string& path)
 {
     if (!buffer.loadFromFile(path))

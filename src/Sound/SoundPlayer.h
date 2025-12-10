@@ -10,7 +10,7 @@ private:
     sf::Sound sound;
 
 public:
-    SoundPlayer() = default;
+    SoundPlayer();
 
     bool load(const std::string& path);
     void play();

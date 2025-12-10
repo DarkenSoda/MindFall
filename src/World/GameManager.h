@@ -90,7 +90,7 @@ private:
     sf::Text scoreText;
     sf::Text playTimeText;
 
-	//SoundPlayer bulletSound;
+	SoundPlayer bulletSound;
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
