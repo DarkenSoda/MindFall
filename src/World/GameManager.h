@@ -12,6 +12,7 @@
 #include "../Spawner/WorldSpawner.h"
 #include "../BossSystem/Boss.h"
 #include "../UI/RageBar.h"
+#include "../UI/BulletCooldownUI.h"
 #include "../Particle.h"
 
 class GameManager {
@@ -55,6 +56,11 @@ private:
 
     RageBar* rageBar;
     sf::Texture rageBarTexture;
+
+	// Bullet cooldown UI
+	BulletCooldownUI* bulletCooldownUI;
+	sf::Texture bulletUITexture;
+	sf::Texture bulletUIGrayTexture;
 
 	std::vector<Particle> particles;
 	

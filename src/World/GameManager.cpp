@@ -10,7 +10,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	healthBar(nullptr),
 	boss(world, { WINDOW_WIDTH / 2.f, -300.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
 	spawner(world),
-	shootCooldown(sf::seconds(2.0f)),
+	shootCooldown(sf::seconds(5.0f)),
 	randomGen(std::random_device{}()),
 	score(0),
 	playTime(0.0f),
@@ -39,11 +39,34 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 		throw std::runtime_error("Failed to load bullet texture from assets/player/bullet.png");
 	}
 
+	bulletTexture.setSmooth(true);
+	if (!bulletTexture.generateMipmap()) {
+		throw std::runtime_error("Failed to generate mipmaps for bullet texture");
+	}
+
 	if (!rageBarTexture.loadFromFile("assets/player/FINAL_LEVEL_UP.png")) {
 		throw std::runtime_error("Failed to load bullet texture from assets/player/FINAL_LEVEL_UP.png");
 	}
 
 	rageBar = new RageBar(rageBarTexture , 5);
+
+	if (!bulletUITexture.loadFromFile("assets/BulletUI.png")) {
+		throw std::runtime_error("Failed to load bullet UI texture from assets/BulletUI.png");
+	}
+
+	if (!bulletUIGrayTexture.loadFromFile("assets/BulletUI_gray.png")) {
+		throw std::runtime_error("Failed to load bullet UI gray texture from assets/BulletUI_gray.png");
+	}
+
+	bulletUITexture.setSmooth(true);
+	bulletUIGrayTexture.setSmooth(true);
+
+	if(!bulletUITexture.generateMipmap() || !bulletUIGrayTexture.generateMipmap()) {
+		throw std::runtime_error("Failed to generate mipmaps for bullet UI texture");
+	}
+	
+	bulletCooldownUI = new BulletCooldownUI(bulletUITexture, bulletUIGrayTexture);
+	bulletCooldownUI->setPosition(sf::Vector2f(1450.0f, 965.0f));
 
 	this->eventHandler->setSpawner(&spawner);
 }
@@ -55,6 +78,7 @@ GameManager::~GameManager()
 		delete healthBar;
 	}
 	delete rageBar;
+	delete bulletCooldownUI;
 }
 
 void GameManager::handleEvents()
@@ -160,6 +184,12 @@ void GameManager::gameManagerUpdate()
 			healthBar->setHealth(currentHealth);
 		}
 		rageBar->setRage(player->getRage());
+		
+		// Update bullet cooldown UI
+		float currentCooldown = shootTimer.getElapsedTime().asSeconds();
+		float maxCooldown = shootCooldown.asSeconds();
+		bulletCooldownUI->setCooldown(maxCooldown - currentCooldown, maxCooldown);
+		
 		for (auto& bullet : bullets) {
 			bullet.update();
 		}
@@ -235,6 +265,10 @@ void GameManager::gameManagerRender()
 
         if (rageBar != nullptr) {
             rageBar->render(*window);
+        }
+
+        if (bulletCooldownUI != nullptr) {
+            bulletCooldownUI->render(*window);
         }
     }
     else if (currentState == State::BEGINING_SCENE)
