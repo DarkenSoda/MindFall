@@ -36,8 +36,10 @@ Menu::Menu(float width, float height, bool exitMenu): m_bgSprite(m_bgTexture), e
 }
 
 int Menu::handleInput(const sf::RenderWindow& window) {
-
-    static bool isHandled = false; 
+    m_btn1->update(window);
+    m_btn2->update(window);
+    
+    static bool isHandled = false;
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         if (!isHandled) {
