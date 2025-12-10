@@ -17,6 +17,12 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MindFall", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
+    sf::Image icon;
+    if (!icon.loadFromFile("assets/icon.ico")) {
+        std::cout << "Failed to load icon image!" << std::endl;
+    }
+    window.setIcon(icon.getSize(), icon.getPixelsPtr());
+
     sf::Texture loadingTexture;
     
     if (loadingTexture.loadFromFile("assets/loading_screen.png")) {

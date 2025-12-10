@@ -3,6 +3,10 @@ project(MindFall LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -26,9 +30,11 @@ FetchContent_MakeAvailable(Box2D)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
+set(APP_ICON_RESOURCE "${CMAKE_SOURCE_DIR}/app.rc")
+
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
-add_executable(${PROJECT_NAME} ${SOURCES} "")
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${APP_ICON_RESOURCE})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC SFML::Graphics
