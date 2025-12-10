@@ -15,21 +15,23 @@
 
 class Player {
 private:
-    b2Body* body;
+    b2Body* body; 
     b2World* world;
+    sf::Vector2f startPosition; //start position for respawn
     sf::Vector2f position;
     sf::Vector2f size;
     Animator animator;
     PlayerParts* playerParts;
+	float startMoveSpeed; //start speed
     float moveSpeed;
-    float rage;
+	float rage;         // reset rage
     float multiplier;
-    bool rageDirection;
+    bool rageDirection;   //rageDirection reset
     float maximumRage;
     float minimumRage;
     float timeToEmptyRage;
     float rageDownCooldown;
-    int lives;
+	int lives;             //reset lives
 	string state;
     EntityData entityData;
     
@@ -75,4 +77,6 @@ public:
     float getRageInterval() const;
     
     b2Body* getBody() const { return body; }
+
+	void resetPlayer();
 };

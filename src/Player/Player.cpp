@@ -250,3 +250,14 @@ void Player::update(float deltatime)
         }
     }
 }
+
+void Player::resetPlayer()
+{
+    lives = 5;
+    rage = 0.0f;
+    rageDirection = false;
+    state = "idle";
+    playerParts->setRotationSpeed(10.0f);
+	moveSpeed = 300.0f;
+    position = startPosition;
+}

@@ -244,6 +244,7 @@ void GameManager::gameManagerRender()
     }
 	else if (currentState == State::GAME_OVER)
 	{
+		player->resetPlayer();
 		window->setView(window->getDefaultView());
 		gameOverMenu.draw(*window);
 	}
