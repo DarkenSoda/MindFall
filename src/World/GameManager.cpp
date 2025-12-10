@@ -17,7 +17,9 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	bossState(BossState::NOT_SPAWNED),
 	bossStartPosition(WINDOW_WIDTH / 2.f, -300.f),
 	bossTargetPosition(WINDOW_WIDTH / 2.f, 162.f),
-	bossIntroSpeed(200.0f)
+	bossIntroSpeed(200.0f),
+	scoreText(uiFont , "", 30),
+	playTimeText(uiFont , "", 30)
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -69,6 +71,24 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	bulletCooldownUI->setPosition(sf::Vector2f(1450.0f, 965.0f));
 
 	this->eventHandler->setSpawner(&spawner);
+
+	// Load font for UI
+    if (!uiFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+        throw std::runtime_error("Failed to load font for UI");
+    }
+
+    // Initialize score text
+    scoreText.setFont(uiFont);
+    scoreText.setCharacterSize(30);
+    scoreText.setFillColor(sf::Color::White);
+	scoreText.setPosition({ 10.f, 10.f });
+
+    // Initialize play time text
+    playTimeText.setFont(uiFont);
+    playTimeText.setCharacterSize(30);
+    playTimeText.setFillColor(sf::Color::White);
+	playTimeText.setPosition({ 10.f, 50.f });
+
 }
 
 GameManager::~GameManager()
@@ -214,6 +234,10 @@ void GameManager::gameManagerUpdate()
 				[](const Particle& p) { return p.isDead(); }),
 			particles.end()
 		);
+
+		// Update score and play time text
+        scoreText.setString("Score: " + std::to_string(score));
+        playTimeText.setString("Time: " + std::to_string(static_cast<int>(playTime)) + "s");
 	}
 	if(currentState == State::BEGINING_SCENE)
 	{
@@ -270,6 +294,10 @@ void GameManager::gameManagerRender()
         if (bulletCooldownUI != nullptr) {
             bulletCooldownUI->render(*window);
         }
+
+		// Draw score and play time text
+        window->draw(scoreText);
+        window->draw(playTimeText);
     }
     else if (currentState == State::BEGINING_SCENE)
     {

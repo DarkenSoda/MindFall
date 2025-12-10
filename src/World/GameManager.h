@@ -14,6 +14,7 @@
 #include "../UI/RageBar.h"
 #include "../UI/BulletCooldownUI.h"
 #include "../Particle.h"
+#include "../Sound/SoundPlayer.h"
 
 class GameManager {
 public:
@@ -83,6 +84,13 @@ private:
 
 	void checkBossSpawn();
 	void updateBossIntro(float deltaTime);
+
+    // UI for displaying score and play time
+    sf::Font uiFont;
+    sf::Text scoreText;
+    sf::Text playTimeText;
+
+	//SoundPlayer bulletSound;
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
