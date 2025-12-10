@@ -134,3 +134,11 @@ void PlayerParts::setRotationSpeed(float speed)
 {
 	rotationSpeed = speed;
 }
+
+void PlayerParts::setColor(const sf::Color& color)
+{
+	for (auto& spr : sprite)
+	{
+		spr.setColor(color);
+	}
+}

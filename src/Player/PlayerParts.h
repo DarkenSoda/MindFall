@@ -25,5 +25,6 @@ public:
 	void drawFrontParts(RenderWindow& window);
 	void rotateWheels();
 	void setRotationSpeed(float speed);
+	void setColor(const sf::Color& color);
 
 };

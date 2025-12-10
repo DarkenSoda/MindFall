@@ -25,8 +25,8 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , entityData(EntityType::BOSS, this)
     , isIntroPhase(true)
 {
-    laser.setExpandDuration(0.3f);
-    laser.setActiveDuration(2.0f);
+    laser.setExpandDuration(0.4f);
+    laser.setActiveDuration(1.0f);
     laser.setShrinkDuration(0.3f);
 
     b2BodyDef bodyDef;
@@ -252,7 +252,7 @@ void Boss::projectileAttack() {
         );
         
         auto projectile = std::make_unique<BossProjectile>(
-            world, spawnPos, velocity, 20.f, windowWidth, windowHeight
+            world, spawnPos, velocity, 28.f, windowWidth, windowHeight
         );
 
         projectile->setTexture(attackTextures[0]);

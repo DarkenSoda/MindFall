@@ -33,6 +33,14 @@ private:
 	string state;
     EntityData entityData;
     
+    // Invulnerability system
+    bool isInvulnerable;
+    float invulnerabilityTimer;
+    float invulnerabilityDuration;
+    float flashTimer;
+    float flashInterval;
+    bool isFlashVisible;
+    
     float windowWidth;
     float windowHeight;
     
@@ -61,6 +69,8 @@ public:
     int getLives() const;
 
     void takeDamage(int damage = 1);
+    
+    bool getIsInvulnerable() const { return isInvulnerable; }
 
     float getRageInterval() const;
     

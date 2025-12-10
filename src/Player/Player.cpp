@@ -32,7 +32,13 @@ Player::Player(b2World* world, sf::Vector2f position, sf::Vector2f size, float m
     lives = 5;
 	state = "idle";
     
-    // Create Box2D body
+    isInvulnerable = false;
+    invulnerabilityTimer = 0.0f;
+    invulnerabilityDuration = 1.0f;
+    flashTimer = 0.0f;
+    flashInterval = 0.1f;
+    isFlashVisible = true;
+    
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.gravityScale = 0.0f;
@@ -40,12 +46,10 @@ Player::Player(b2World* world, sf::Vector2f position, sf::Vector2f size, float m
     
     body = world->CreateBody(&bodyDef);
     
-    // Get sprite bounds to calculate offset
     auto spriteBounds = animator.CurrentAnimaton().getGlobalBounds();
     float offsetX = (spriteBounds.size.x / 2.f) / SCALE;
     float offsetY = (spriteBounds.size.y / 2.f) / SCALE;
     
-    // Create Box2D fixture (collision shape) centered on sprite
     b2PolygonShape boxShape;
     boxShape.SetAsBox((size.x / 2.f) / SCALE, (size.y / 2.f) / SCALE, b2Vec2(offsetX, offsetY), 0.f);
     
@@ -86,18 +90,14 @@ void Player::move(PlayerCommand cmd, float deltaTime)
         break;
     }
     
-    // Update Box2D body velocity
     body->SetLinearVelocity(b2Vec2(velocityX, 0.f));
     
-    // Update position from Box2D
     b2Vec2 bodyPos = body->GetPosition();
     position = sf::Vector2f(bodyPos.x * SCALE, bodyPos.y * SCALE);
     
-    // Get sprite bounds for offset calculation
     auto spriteBounds = animator.CurrentAnimaton().getGlobalBounds();
     float offsetX = spriteBounds.size.x / 2.f;
     
-    // Clamp position to window bounds accounting for sprite offset
     float halfWidth = size.x / 2.f;
     float leftBound = -offsetX + halfWidth;
     float rightBound = windowWidth - offsetX - halfWidth;
@@ -115,6 +115,22 @@ void Player::move(PlayerCommand cmd, float deltaTime)
     
     playerParts->updateParts(position);
     animator.PlayAnimation(state, deltaTime, position);
+    
+    if (isInvulnerable) {
+        invulnerabilityTimer += deltaTime;
+        flashTimer += deltaTime;
+        
+        if (flashTimer >= flashInterval) {
+            isFlashVisible = !isFlashVisible;
+            flashTimer = 0.0f;
+        }
+        
+        if (invulnerabilityTimer >= invulnerabilityDuration) {
+            isInvulnerable = false;
+            invulnerabilityTimer = 0.0f;
+            isFlashVisible = true;
+        }
+    }
 }
 
 void Player::setPlayerPosition(sf::Vector2f position)
@@ -144,9 +160,18 @@ int Player::getLives() const
 
 void Player::takeDamage(int damage)
 {
+    if (isInvulnerable) {
+        return;
+    }
+    
     lives -= damage;
     if (lives < 0)
         lives = 0;
+    
+    isInvulnerable = true;
+    invulnerabilityTimer = 0.0f;
+    flashTimer = 0.0f;
+    isFlashVisible = true;
 }
 
 sf::FloatRect Player::getGlobalBound()
@@ -156,11 +181,24 @@ sf::FloatRect Player::getGlobalBound()
 
 void Player::drawPlayer(sf::RenderWindow& window)
 {
+    sf::Color colorEffect;
+    if (isInvulnerable && isFlashVisible) {
+        colorEffect = sf::Color(255, 100, 100);
+    } else if (isInvulnerable && !isFlashVisible) {
+        colorEffect = sf::Color(255, 255, 255, 255);
+    } else {
+        colorEffect = sf::Color::White;
+    }
+    
+    playerParts->setColor(colorEffect);
     playerParts->drawBehindParts(window);
-    window.draw(animator.CurrentAnimaton());
+    
+    sf::Sprite& sprite = animator.CurrentAnimaton();
+    sprite.setColor(colorEffect);
+    
+    window.draw(sprite);
     playerParts->drawFrontParts(window);
     
-    // Debug draw collision box (offset to match sprite center)
     b2Vec2 bodyPos = body->GetPosition();
     auto spriteBounds = animator.CurrentAnimaton().getGlobalBounds();
     float offsetX = spriteBounds.size.x / 2.f;
