@@ -154,3 +154,14 @@ void BossLaser::render(sf::RenderWindow& window) {
     //     window.draw(debugBox);
     // }
 }
+
+void BossLaser::laserReset()
+{
+    state = LaserState::Inactive;
+    currentWidth = 0.f;
+    stateTimer = 0.f;
+    if (laserFixture) {
+        body->DestroyFixture(laserFixture);
+        laserFixture = nullptr;
+	}
+}

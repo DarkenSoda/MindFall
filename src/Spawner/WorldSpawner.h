@@ -33,4 +33,5 @@ public:
     void removeInactiveCollectibles();
     void switchAllCollectible();
     void resetType();
+    void resetSpawner();
 };

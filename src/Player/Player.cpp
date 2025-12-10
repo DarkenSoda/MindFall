@@ -21,6 +21,7 @@ Player::Player(b2World* world, sf::Vector2f position, sf::Vector2f size, float m
     this->moveSpeed = moveSpeed;
     animations();
     
+	startPosition = position;
     rage = 1.0f;
     multiplier = 8.0f;
     rageDirection = false;
@@ -260,4 +261,9 @@ void Player::resetPlayer()
     playerParts->setRotationSpeed(10.0f);
 	moveSpeed = 300.0f;
     position = startPosition;
+	body->SetTransform(b2Vec2(position.x / SCALE, position.y / SCALE), 0.f);
+    isInvulnerable = false;
+    invulnerabilityTimer = 0.0f;
+    isFlashVisible = true;
+    
 }

@@ -278,7 +278,16 @@ void GameManager::gameManagerRender()
     }
 	else if (currentState == State::GAME_OVER)
 	{
+		//resets
 		player->resetPlayer();
+		spawner.resetSpawner();
+		delete eventHandler;
+		eventHandler = new EventHandler(inputHandler, player, gameView);
+		score = 0;
+		playTime = 0.0f;
+		bossState = BossState::NOT_SPAWNED;
+		boss.resetBoss();
+
 		window->setView(window->getDefaultView());
 		gameOverMenu.draw(*window);
 	}

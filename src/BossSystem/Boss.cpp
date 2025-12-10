@@ -24,6 +24,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , hp(3)
     , entityData(EntityType::BOSS, this)
     , isIntroPhase(true)
+    , startPosition(position)
 {
     laser.setExpandDuration(0.4f);
     laser.setActiveDuration(1.0f);
@@ -291,4 +292,17 @@ void Boss::takeDamage() {
     if (hp > 0) {
         hp--;
     }
+}
+
+void Boss::resetBoss()
+{
+	position = startPosition;
+	body->SetTransform(b2Vec2(startPosition.x / SCALE, startPosition.y / SCALE), 0.f);
+    playAnimation("idle");
+	attackTimer = 0.f;
+	hp = 3;
+	isIntroPhase = true;
+
+	projectiles.clear();
+	laser.laserReset();
 }

@@ -57,6 +57,8 @@ public:
     void setExpandDuration(float duration) { expandDuration = duration; }
     void setActiveDuration(float duration) { activeDuration = duration; }
     void setShrinkDuration(float duration) { shrinkDuration = duration; }
+
+	void laserReset();
     
     sf::Vector2f getPosition() const { return position; }
     b2Body* getBody() const { return body; }

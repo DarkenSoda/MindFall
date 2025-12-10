@@ -15,17 +15,18 @@
 
 class Boss {
 private:
-    b2Body* body;
+    b2Body* body;       //transfom 
     b2World* world;
-    sf::Vector2f position;
+	sf::Vector2f startPosition;
+	sf::Vector2f position;   // position
     sf::Vector2f size;
     
-    sf::Texture idleTexture;
+    sf::Texture idleTexture; 
     sf::Texture laserTexture;
     sf::Texture projectileTexture;
     sf::Sprite sprite;
     std::map<std::string, BossAnimation> animations;
-    std::string currentAnimation;
+	std::string currentAnimation;   //play animation idle
     int currentFrame;
     float animationTimer;
         
@@ -34,18 +35,18 @@ private:
     float leftBound;
     float rightBound;
     
-    float attackTimer;
+	float attackTimer;     //reset attack timer
     float attackInterval;
-    std::vector<std::unique_ptr<BossProjectile>> projectiles;
+    std::vector<std::unique_ptr<BossProjectile>> projectiles; //clear
     BossLaser laser;
     float windowWidth;
     float windowHeight;
 
     std::vector<sf::Texture> attackTextures;
     
-    int hp;
+	int hp;  //reset hp 3
     EntityData entityData;
-    bool isIntroPhase;
+    bool isIntroPhase; //true
 
     const float SCALE = 30.f;
     
@@ -77,4 +78,6 @@ public:
     int getHP() const { return hp; }
     sf::Vector2f getPosition() const { return position; }
     b2Body* getBody() const { return body; }
+
+	void resetBoss();
 };
