@@ -23,6 +23,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , sprite(idleTexture)
     , hp(3)
     , entityData(EntityType::BOSS, this)
+    , isIntroPhase(true)
 {
     laser.setExpandDuration(0.3f);
     laser.setActiveDuration(2.0f);
@@ -131,18 +132,24 @@ void Boss::update(float deltaTime) {
 
     position = newPosition;
 
-    float buffer = 5.f;
-    if (position.x <= leftBound + size.x / 2.f + buffer && movementDirection < 0.f) {
-        movementDirection = 1.0f;
-    }
-    else if (position.x >= rightBound - size.x / 2.f - buffer && movementDirection > 0.f) {
-        movementDirection = -1.0f;
-    }
+    // Skip movement and attacks during intro phase
+    if (!isIntroPhase) {
+        float buffer = 5.f;
+        if (position.x <= leftBound + size.x / 2.f + buffer && movementDirection < 0.f) {
+            movementDirection = 1.0f;
+        }
+        else if (position.x >= rightBound - size.x / 2.f - buffer && movementDirection > 0.f) {
+            movementDirection = -1.0f;
+        }
 
-    body->SetLinearVelocity(b2Vec2((moveSpeed / SCALE) * movementDirection, 0.f));
+        body->SetLinearVelocity(b2Vec2((moveSpeed / SCALE) * movementDirection, 0.f));
+
+        updateAttacks(deltaTime);
+    } else {
+        body->SetLinearVelocity(b2Vec2(0.f, body->GetLinearVelocity().y));
+    }
 
     updateAnimation(deltaTime);
-    updateAttacks(deltaTime);
     
     laser.updatePosition(position);
     laser.update(deltaTime);

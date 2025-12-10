@@ -1,4 +1,5 @@
 #pragma once
+
 enum class EntityType {
     PLAYER,
     BOSS,

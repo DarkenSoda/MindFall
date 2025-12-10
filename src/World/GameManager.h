@@ -56,11 +56,27 @@ private:
     RageBar* rageBar;
     sf::Texture rageBarTexture;
 
-	// Particle system
 	std::vector<Particle> particles;
 	
-	// Random number generator for particles
 	std::mt19937 randomGen;
+
+	int score;
+	float playTime;
+	const int SCORE_TO_SPAWN_BOSS = 10;
+	const float TIME_TO_SPAWN_BOSS = 120.0f; // 2 minutes
+
+	enum class BossState {
+		NOT_SPAWNED,
+		INTRO,
+		ACTIVE
+	};
+	BossState bossState;
+	sf::Vector2f bossStartPosition;
+	sf::Vector2f bossTargetPosition;
+	float bossIntroSpeed;
+
+	void checkBossSpawn();
+	void updateBossIntro(float deltaTime);
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
@@ -79,4 +95,10 @@ public:
 	void applyDamageToPlayer();
 	void applyDamageToBoss();
 	void spawnParticleAt(sf::Vector2f position, sf::Color color, int count = 20);
+	void addScore(int amount = 1);
+
+	// Getters
+	int getScore() const { return score; }
+	float getPlayTime() const { return playTime; }
+	bool isBossActive() const { return bossState == BossState::ACTIVE; }
 };

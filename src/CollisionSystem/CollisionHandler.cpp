@@ -28,11 +28,14 @@ void CollisionHandler::BeginContact(b2Contact* contact) {
     EntityType type2 = dataB->type;
     EntityData* data1 = dataA;
     EntityData* data2 = dataB;
+    b2Fixture* fixture1 = fixtureA;
+    b2Fixture* fixture2 = fixtureB;
 
     // Ensure consistent ordering: type1 should be Player/Boss/Ground
     if (static_cast<int>(type1) > static_cast<int>(type2)) {
         std::swap(type1, type2);
         std::swap(data1, data2);
+        std::swap(fixture1, fixture2);
     }
 
     switch (type1) {
@@ -58,7 +61,9 @@ void CollisionHandler::BeginContact(b2Contact* contact) {
     case EntityType::BOSS:
         switch (type2) {
         case EntityType::BULLET:
-            handleBossHit(data1, data2);
+            if (!fixture1->IsSensor()) {
+                handleBossHit(data1, data2);
+            }
             break;
         }
         break;
@@ -94,7 +99,8 @@ void CollisionHandler::handlePlayerCollectible(EntityData* playerData, EntityDat
         sf::Vector2f pos = collectible->getPosition();
         collectible->setActive(false);
 
-        // gameManager->addScore();
+        gameManager->addScore();
+        gameManager->spawnParticleAt(pos, sf::Color::Green);
     }
 }
 

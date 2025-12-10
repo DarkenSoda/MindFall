@@ -45,6 +45,7 @@ private:
     
     int hp;
     EntityData entityData;
+    bool isIntroPhase;
 
     const float SCALE = 30.f;
     
@@ -70,6 +71,8 @@ public:
     void render(sf::RenderWindow& window);
     
     void takeDamage();
+    void setIntroPhase(bool intro) { isIntroPhase = intro; }
+    bool isInIntro() const { return isIntroPhase; }
     
     int getHP() const { return hp; }
     sf::Vector2f getPosition() const { return position; }

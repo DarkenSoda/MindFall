@@ -8,10 +8,16 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	: startMenu(1920, 1080), 
 	gameOverMenu(1920, 1080, true),
 	healthBar(nullptr),
-	boss(world, { WINDOW_WIDTH / 2.f, 162.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
+	boss(world, { WINDOW_WIDTH / 2.f, -300.f }, { 450.f, 220.f }, WINDOW_WIDTH, WINDOW_HEIGHT),
 	spawner(world),
 	shootCooldown(sf::seconds(0.3f)),
-	randomGen(std::random_device{}())
+	randomGen(std::random_device{}()),
+	score(0),
+	playTime(0.0f),
+	bossState(BossState::NOT_SPAWNED),
+	bossStartPosition(WINDOW_WIDTH / 2.f, -300.f),
+	bossTargetPosition(WINDOW_WIDTH / 2.f, 162.f),
+	bossIntroSpeed(200.0f)
 {
 	this->window = window;
 	this->inputHandler = inputHandler;
@@ -20,7 +26,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	this->world = world;
 	
 	eventHandler = new EventHandler(inputHandler, player, gameView);
-	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 1, 10.f);
+	videoBg = new VideoBackground("assets/VideoBackground", "", ".png", 63, 10.f);
 	gameMap.init(*world);
 
 	if (!healthBarTexture.loadFromFile("assets/player/hp.png"))
@@ -131,7 +137,15 @@ void GameManager::gameManagerUpdate()
 
 	if (currentState == State::PLAYING)
 	{
-		boss.update(Utils::Time::deltaTime);
+		playTime += Utils::Time::deltaTime;
+		checkBossSpawn();
+
+		if (bossState == BossState::INTRO) {
+			updateBossIntro(Utils::Time::deltaTime);
+		} else if (bossState == BossState::ACTIVE) {
+			boss.update(Utils::Time::deltaTime);
+		}
+
 		spawner.update(Utils::Time::deltaTime, WINDOW_WIDTH);
 
 		world->Step(Utils::Time::fixedDeltaTime, 8, 3);
@@ -195,7 +209,12 @@ void GameManager::gameManagerRender()
         window->setView(*gameView);
         gameMap.draw(*window);
         spawner.draw(*window);
-        boss.render(*window);
+        
+        // Only render boss if it has spawned
+        if (bossState != BossState::NOT_SPAWNED) {
+            boss.render(*window);
+        }
+        
         player->drawPlayer(*window);
 
         // Draw bullets with game view
@@ -241,8 +260,11 @@ void GameManager::applyDamageToPlayer()
 
 void GameManager::applyDamageToBoss()
 {
-	// Boss damage logic will be handled by the Boss class
 	boss.takeDamage();
+	
+	if (boss.getHP() <= 0) {
+		currentState = State::GAME_OVER;
+	}
 }
 
 void GameManager::spawnParticleAt(sf::Vector2f position, sf::Color color, int count)
@@ -263,5 +285,73 @@ void GameManager::spawnParticleAt(sf::Vector2f position, sf::Color color, int co
 		particleColor.b = std::min(255, static_cast<int>(color.b * (0.8f + 0.4f * static_cast<float>(rand()) / RAND_MAX)));
 
 		particles.emplace_back(position, velocity, particleColor, lifeDist(randomGen));
+	}
+}
+
+void GameManager::addScore(int amount)
+{
+	score += amount;
+}
+
+void GameManager::checkBossSpawn()
+{
+	if (bossState == BossState::NOT_SPAWNED) {
+		if (score >= SCORE_TO_SPAWN_BOSS || playTime >= TIME_TO_SPAWN_BOSS) {
+			bossState = BossState::INTRO;
+			boss.setIntroPhase(true);
+			
+			// Reset boss position to start position
+			b2Body* bossBody = boss.getBody();
+			if (bossBody) {
+				bossBody->SetTransform(
+					b2Vec2(bossStartPosition.x / 30.f, bossStartPosition.y / 30.f),
+					0.0f
+				);
+				
+				// Ensure collider is disabled during intro (set as sensor)
+				for (b2Fixture* fixture = bossBody->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+					fixture->SetSensor(true);
+				}
+			}
+		}
+	}
+}
+
+void GameManager::updateBossIntro(float deltaTime)
+{
+	b2Body* bossBody = boss.getBody();
+	if (!bossBody) return;
+
+	sf::Vector2f currentPos = boss.getPosition();
+	
+	if (currentPos.y < bossTargetPosition.y) {
+		// Set downward velocity
+		bossBody->SetLinearVelocity(b2Vec2(0.f, bossIntroSpeed / 30.f));
+		
+		boss.update(Utils::Time::deltaTime);
+		
+		if (boss.getPosition().y >= bossTargetPosition.y) {
+			bossState = BossState::ACTIVE;
+			boss.setIntroPhase(false);
+			
+			bossBody->SetLinearVelocity(b2Vec2(0.f, 0.f));
+			
+			bossBody->SetTransform(
+				b2Vec2(bossTargetPosition.x / 30.f, bossTargetPosition.y / 30.f),
+				0.0f
+			);
+			
+			for (b2Fixture* fixture = bossBody->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+				fixture->SetSensor(false);
+			}
+		}
+	} else {
+		bossState = BossState::ACTIVE;
+		boss.setIntroPhase(false);
+		bossBody->SetLinearVelocity(b2Vec2(0.f, 0.f));
+		
+		for (b2Fixture* fixture = bossBody->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+			fixture->SetSensor(false);
+		}
 	}
 }
