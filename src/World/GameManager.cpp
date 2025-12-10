@@ -15,6 +15,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	score(0),
 	playTime(0.0f),
 	bossState(BossState::NOT_SPAWNED),
+	pendingReset(false),
 	bossStartPosition(WINDOW_WIDTH / 2.f, -300.f),
 	bossTargetPosition(WINDOW_WIDTH / 2.f, 162.f),
 	bossIntroSpeed(200.0f),
@@ -99,6 +100,7 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	if (!bossMusic.load("assets/Sound/bossMusic.mp3")) {
 		std::cerr << "Warning: Failed to load boss music sound" << std::endl;
 	}
+	bossMusic.setVolume(80.0f);
 
 	if (!gameloopMusic.load("assets/Sound/gameloop.mp3")) {
 		std::cerr << "Warning: Failed to load gameloop sound" << std::endl;
@@ -107,6 +109,17 @@ GameManager::GameManager(sf::RenderWindow* window, InputHandler* inputHandler, P
 	if (!ouchSound.load("assets/Sound/ouch.mp3")) {
 		std::cerr << "Warning: Failed to load bullet sound" << std::endl;
 	}
+
+	if(!failSound.load("assets/Sound/fail.mp3")) {
+		std::cerr << "Warning: Failed to load fail sound" << std::endl;
+	}
+
+	if (!victorySound.load("assets/Sound/victory.mp3")) {
+		std::cerr << "Warning: Failed to load victory sound" << std::endl;
+	}
+
+	victorySound.loop();
+	victorySound.setVolume(40.0f);
 
 	// Initialize rage effect shader
 	hasRageEffectShader = false;
@@ -219,6 +232,9 @@ void GameManager::gameManagerUpdate()
 		int action = gameOverMenu.handleInput(*window);
 		if (action == 1) {
 			currentState = State::PLAYING;
+			failSound.Stop();
+			victorySound.Stop();
+			introMusic.play();
 		}
 		else if (action == 2) {
 			window->close();
@@ -233,8 +249,13 @@ void GameManager::gameManagerUpdate()
 		if (bossState == BossState::INTRO) {
 			updateBossIntro(Utils::Time::deltaTime);
 			introMusic.Stop();
-			bossMusic.play();
-		} else if (bossState == BossState::ACTIVE) {
+
+			if (!bossMusicPlaying) {
+				bossMusicPlaying = true;
+				bossMusic.play();
+			}
+		}
+		else if (bossState == BossState::ACTIVE) {
 			boss.update(Utils::Time::deltaTime);
 		}
 
@@ -292,6 +313,11 @@ void GameManager::gameManagerUpdate()
 			rageEffectShader.setUniform("time", Utils::Time::time);
 			rageEffectShader.setUniform("resolution", sf::Glsl::Vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 		}
+
+		if (pendingReset) {
+			resetGame();
+			pendingReset = false;
+		}
 	}
 	if(currentState == State::BEGINING_SCENE)
 	{
@@ -308,7 +334,6 @@ void GameManager::gameManagerRender()
 {
     if (currentState == State::MAIN_MENU)
     {
-        window->setView(window->getDefaultView());
         startMenu.draw(*window);
     }
     else if (currentState == State::PLAYING)
@@ -332,8 +357,6 @@ void GameManager::gameManagerRender()
 		for (const auto& particle : particles) {
 			const_cast<Particle&>(particle).draw(*window);
 		}
-
-        window->setView(window->getDefaultView());
 
         if (healthBar != nullptr) {
             healthBar->render(*window);
@@ -360,39 +383,57 @@ void GameManager::gameManagerRender()
     }
     else if (currentState == State::BEGINING_SCENE)
     {
-        window->setView(window->getDefaultView());
         videoBg->draw(*window);
-    }
+	}
 	else if (currentState == State::GAME_OVER)
 	{
-		//resets
-		inputHandler->setDirection(false);
-		gameView->setRotation(sf::degrees(0.0f));
-		bullets.clear();
-		particles.clear();
-		player->resetPlayer();
-		spawner.resetSpawner();
-		boss.resetBoss();
-
-		delete eventHandler;
-		eventHandler = new EventHandler(inputHandler, player, gameView);
-		eventHandler->setSpawner(&spawner);
-	
-		score = 0;
-		playTime = 0.0f;
-		bossState = BossState::NOT_SPAWNED;
-
 		gameOverMenu.draw(*window);
 	}
 }
 
+void GameManager::resetGame() {
+    //resets
+    inputHandler->setDirection(false);
+    gameView->setRotation(sf::degrees(0.0f));
+    bullets.clear();
+    particles.clear();
+    player->resetPlayer();
+    spawner.resetSpawner();
+    boss.resetBoss();
+
+    delete eventHandler;
+    eventHandler = new EventHandler(inputHandler, player, gameView);
+    eventHandler->setSpawner(&spawner);
+
+    score = 0;
+    playTime = 0.0f;
+	bossState = BossState::NOT_SPAWNED;
+
+	bossMusicPlaying = false;
+	bossMusic.Stop();
+	bulletSound.Stop();
+	introMusic.Stop();
+	gameloopMusic.Stop();
+	ouchSound.Stop();
+	coinSound.Stop();
+	// bossHurt.Stop();
+
+
+    gameOverMenu.draw(*window);
+}
+
 void GameManager::applyDamageToPlayer()
 {
-	ouchSound.play();
+	if (!player->getIsInvulnerable()) {
+		ouchSound.play();
+	}
+
 	player->takeDamage(1);
 	
 	if (player->getLives() <= 0) {
 		currentState = State::GAME_OVER;
+		pendingReset = true;
+		failSound.play();
 	}
 }
 
@@ -403,6 +444,8 @@ void GameManager::applyDamageToBoss()
 	
 	if (boss.getHP() <= 0) {
 		currentState = State::GAME_OVER;
+		pendingReset = true;
+		victorySound.play();
 	}
 }
 

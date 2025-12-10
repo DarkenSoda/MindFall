@@ -69,7 +69,7 @@ private:
 
 	int score;
 	float playTime;
-	const int SCORE_TO_SPAWN_BOSS = 10;
+	const int SCORE_TO_SPAWN_BOSS = 20;
 	const float TIME_TO_SPAWN_BOSS = 120.0f; // 2 minutes
 
 	enum class BossState {
@@ -90,6 +90,8 @@ private:
     sf::Text scoreText;
     sf::Text playTimeText;
 
+	SoundPlayer failSound;
+	SoundPlayer victorySound;
 	SoundPlayer bulletSound;
 	SoundPlayer introMusic;
 	SoundPlayer bossMusic;
@@ -97,11 +99,13 @@ private:
 	SoundPlayer ouchSound;
 	SoundPlayer coinSound;
 	SoundPlayer bossHurt;
-
+	bool bossMusicPlaying = false;
 
 	sf::RectangleShape rageEffectRect;
 	sf::Shader rageEffectShader;
 	bool hasRageEffectShader;
+
+	bool pendingReset;
 
 public:
 	GameManager(sf::RenderWindow* window, InputHandler* inputHandler, Player* player, sf::View* gameView, b2World* world);
@@ -114,7 +118,9 @@ public:
 	void gameManagerUpdate();
 
 	// Renders the current state
-	void gameManagerRender();
+    void gameManagerRender();
+
+    void resetGame();
 
 	// Game state modification functions
 	void applyDamageToPlayer();

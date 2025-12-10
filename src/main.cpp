@@ -17,21 +17,12 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MiniJam", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
-    sf::Font loadingFont;
-    bool hasFont = loadingFont.openFromFile("C:/Windows/Fonts/arial.ttf");
+    sf::Texture loadingTexture;
     
-    if (hasFont) {
-        sf::Text loadingText(loadingFont);
-        loadingText.setString("Loading...");
-        loadingText.setCharacterSize(60);
-        loadingText.setFillColor(sf::Color::White);
-        
-        sf::FloatRect textBounds = loadingText.getLocalBounds();
-        loadingText.setOrigin(sf::Vector2f(textBounds.size.x / 2.f, textBounds.size.y / 2.f));
-        loadingText.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f));
-        
+    if (loadingTexture.loadFromFile("assets/loading_screen.png")) {
+        sf::Sprite loadingSprite(loadingTexture);
         window.clear(sf::Color::Black);
-        window.draw(loadingText);
+        window.draw(loadingSprite);
         window.display();
     } else {
         window.clear(sf::Color::Black);

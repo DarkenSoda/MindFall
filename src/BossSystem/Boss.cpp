@@ -21,7 +21,7 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     , windowHeight(windowHeight)
     , laser(world, 110.f, 1080.f, windowWidth, windowHeight)
     , sprite(idleTexture)
-    , hp(3)
+    , hp(10)
     , entityData(EntityType::BOSS, this)
     , isIntroPhase(true)
     , startPosition(position)
@@ -59,11 +59,11 @@ Boss::Boss(b2World* world, sf::Vector2f startPosition, sf::Vector2f bossSize, fl
     if (!orbAttackSound.load("assets/Sound/bossOrbAttack.mp3")) {
         std::cerr << "Warning: Failed to load coin sound" << std::endl;
     }
-	orbAttackSound.setPitch(1.5f);
+    orbAttackSound.setPitch(1.5f);
 
-    /*if (!bossHurt.load("assets/Sound/bossHurt.mp3")) {
+    if (!laserAttackSound.load("assets/Sound/Laser.mp3")) {
         std::cerr << "Warning: Failed to load coin sound" << std::endl;
-    }*/
+    }
 
 
     attackTextures.push_back(projectileTex);
@@ -94,6 +94,14 @@ bool Boss::loadSprites(const std::string& idlePath, const std::string& laserPath
         return false;
     }
 
+    idleTexture.setSmooth(true);
+    laserTexture.setSmooth(true);
+    projectileTexture.setSmooth(true);
+    if (!idleTexture.generateMipmap() || !laserTexture.generateMipmap() || !projectileTexture.generateMipmap()) {
+        std::cerr << "Failed to generate mipmaps for boss textures." << std::endl;
+        return false;
+    }
+
     addAnimation("idle", idleTexture, 5, 0.15f, true);
     addAnimation("laser", laserTexture, 9, 0.2f, false);
     addAnimation("projectile", projectileTexture, 5, 0.2f, false);
@@ -120,7 +128,7 @@ void Boss::playAnimation(const std::string& name) {
         sprite.setTexture(*anim.texture);
         sprite.setTextureRect(sf::IntRect({0, 0}, {anim.frameWidth, anim.frameHeight}));
         sprite.setOrigin({ anim.frameWidth / 2.f, anim.frameHeight / 2.f });
-        sprite.setScale({0.2f, 0.2f});
+        sprite.setScale({0.8f, 0.8f});
     }
 }
 
@@ -230,7 +238,7 @@ void Boss::performAttack() {
         playAnimation("projectile");
     }
     else {
-
+        laserAttackSound.play();
         laserAttack();
         playAnimation("laser");
     }
@@ -308,11 +316,14 @@ void Boss::takeDamage() {
 
 void Boss::resetBoss()
 {
-	position = startPosition;
+    orbAttackSound.Stop();
+    laserAttackSound.Stop();
+
+    position = startPosition;
 	body->SetTransform(b2Vec2(startPosition.x / SCALE, startPosition.y / SCALE), 0.f);
     playAnimation("idle");
 	attackTimer = 0.f;
-	hp = 3;
+	hp = 10;
 	isIntroPhase = true;
 
 	for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
