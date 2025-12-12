@@ -43,6 +43,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_options(${PROJECT_NAME} PRIVATE "-static-libgcc" "-static-libstdc++" "-static")
+target_link_libraries(MindFall PRIVATE sfml-graphics sfml-window sfml-system sfml-main)
 
 # Copy assets directory to output directory after build
 if(EXISTS ${CMAKE_SOURCE_DIR}/assets)

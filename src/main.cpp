@@ -13,7 +13,8 @@
 const float WINDOW_WIDTH = 1920.f;
 const float WINDOW_HEIGHT = 1080.f;
 
-int main() {
+int main() 
+{
     sf::RenderWindow window(sf::VideoMode({ static_cast<unsigned int>(WINDOW_WIDTH), static_cast<unsigned int>(WINDOW_HEIGHT) }), "MindFall", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
